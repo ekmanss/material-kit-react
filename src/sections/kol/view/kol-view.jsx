@@ -1,5 +1,4 @@
 import { useState } from 'react';
-
 import { useKols } from 'src/hooks/useKols';
 
 import Card from '@mui/material/Card';
@@ -11,8 +10,8 @@ import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
-
-import { users } from 'src/_mock/user';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
@@ -27,46 +26,35 @@ import { emptyRows, applyFilter, getComparator } from '../utils';
 // ----------------------------------------------------------------------
 
 export default function KolPage() {
-  // const { data: kols, isLoading, isError, error } = useKols();
-  const _mock_kols = [{
-    "id": 1,
-    "twitter": "@kol_king",
-    "name": "kol_king",
-    "token": "btc",
-    "key_word": "meme",
-    "description": "first kol",
-    "result": null,
-    "star": "5",
-    "recommend": "1",
-    "score": "98",
-    "photo": "https://pbs.twimg.com/profile_images/1781374522966601732/HA_dnDvL_400x400.jpg",
-    "key_words": [
-      "中文",
-      "Defi"
-    ],
-    "recommend_token": [
-      {
-        "token_symbol": "MOG",
-        "token_address": "0xaaee1a9723aadb7afa2810263653a34ba2c21c7a"
-      },
-      {
-        "token_symbol": "PEPE",
-        "token_address": "0x6982508145454ce325ddbe47a25d4ec3d2311933"
-      }
-    ]
-  }]
+  const { data, isLoading, isError, error } = useKols();
 
   const [page, setPage] = useState(0);
-
   const [order, setOrder] = useState('asc');
-
   const [selected, setSelected] = useState([]);
-
   const [orderBy, setOrderBy] = useState('name');
-
   const [filterName, setFilterName] = useState('');
-
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  // 处理加载状态
+  if (isLoading) {
+    return (
+      <Container>
+        <CircularProgress />
+      </Container>
+    );
+  }
+
+  // 处理错误状态
+  if (isError) {
+    return (
+      <Container>
+        <Alert severity="error">Error loading data: {error.message}</Alert>
+      </Container>
+    );
+  }
+
+  // 确保 kols 是一个数组
+  const kols = data?.kols || [];
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -78,7 +66,7 @@ export default function KolPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = users.map((n) => n.name);
+      const newSelecteds = kols.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -97,7 +85,7 @@ export default function KolPage() {
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(
         selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
+        selected.slice(selectedIndex + 1),
       );
     }
     setSelected(newSelected);
@@ -118,7 +106,7 @@ export default function KolPage() {
   };
 
   const dataFiltered = applyFilter({
-    inputData: users,
+    inputData: kols,
     comparator: getComparator(order, orderBy),
     filterName,
   });
@@ -128,10 +116,10 @@ export default function KolPage() {
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Users</Typography>
+        <Typography variant="h4">KOLs</Typography>
 
         <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
-          New User
+          New KOL
         </Button>
       </Stack>
 
@@ -148,17 +136,19 @@ export default function KolPage() {
               <UserTableHead
                 order={order}
                 orderBy={orderBy}
-                rowCount={users.length}
+                rowCount={kols.length}
                 numSelected={selected.length}
                 onRequestSort={handleSort}
                 onSelectAllClick={handleSelectAllClick}
                 headLabel={[
                   { id: 'name', label: 'Name' },
-                  { id: 'company', label: 'Company' },
-                  { id: 'role', label: 'Role' },
-                  { id: 'isVerified', label: 'Verified', align: 'center' },
-                  { id: 'status', label: 'Status' },
-                  { id: '' },
+                  { id: 'twitter', label: 'Twitter' },
+                  { id: 'description', label: 'Description' },
+                  { id: 'star', label: 'Star' },
+                  { id: 'recommend', label: 'Recommend' },
+                  { id: 'score', label: 'Score' },
+                  { id: 'key_words', label: 'Key Words' },
+                  { id: '', label: 'Actions' },
                 ]}
               />
               <TableBody>
@@ -168,11 +158,13 @@ export default function KolPage() {
                     <UserTableRow
                       key={row.id}
                       name={row.name}
-                      role={row.role}
-                      status={row.status}
-                      company={row.company}
-                      avatarUrl={row.avatarUrl}
-                      isVerified={row.isVerified}
+                      twitter={row.twitter}
+                      description={row.description}
+                      star={row.star}
+                      recommend={row.recommend}
+                      score={row.score}
+                      photo={row.photo}
+                      key_words={row.key_words}
                       selected={selected.indexOf(row.name) !== -1}
                       handleClick={(event) => handleClick(event, row.name)}
                     />
@@ -180,7 +172,7 @@ export default function KolPage() {
 
                 <TableEmptyRows
                   height={77}
-                  emptyRows={emptyRows(page, rowsPerPage, users.length)}
+                  emptyRows={emptyRows(page, rowsPerPage, kols.length)}
                 />
 
                 {notFound && <TableNoData query={filterName} />}
@@ -192,7 +184,7 @@ export default function KolPage() {
         <TablePagination
           page={page}
           component="div"
-          count={users.length}
+          count={kols.length}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
           rowsPerPageOptions={[5, 10, 25]}

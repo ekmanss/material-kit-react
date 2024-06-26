@@ -16,16 +16,24 @@ import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
+const getScoreColor = (score) => {
+  if (score >= 80) return 'success';
+  if (score >= 60) return 'warning';
+  return 'error';
+};
+
 export default function UserTableRow({
-  selected,
-  name,
-  avatarUrl,
-  company,
-  role,
-  isVerified,
-  status,
-  handleClick,
-}) {
+                                       selected,
+                                       twitter,
+                                       name,
+                                       description,
+                                       star,
+                                       recommend,
+                                       score,
+                                       photo,
+                                       key_words,
+                                       handleClick,
+                                     }) {
   const [open, setOpen] = useState(null);
 
   const handleOpenMenu = (event) => {
@@ -45,22 +53,23 @@ export default function UserTableRow({
 
         <TableCell component="th" scope="row" padding="none">
           <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar alt={name} src={avatarUrl} />
+            <Avatar alt={name} src={photo} />
             <Typography variant="subtitle2" noWrap>
               {name}
             </Typography>
           </Stack>
         </TableCell>
 
-        <TableCell>{company}</TableCell>
-
-        <TableCell>{role}</TableCell>
-
-        <TableCell align="center">{isVerified ? 'Yes' : 'No'}</TableCell>
-
+        <TableCell>{twitter}</TableCell>
+        <TableCell>{description}</TableCell>
+        <TableCell>{star}</TableCell>
+        <TableCell>{recommend}</TableCell>
         <TableCell>
-          <Label color={(status === 'banned' && 'error') || 'success'}>{status}</Label>
+          <Label color={getScoreColor(Number(score))}>
+            {score}
+          </Label>
         </TableCell>
+        <TableCell>{key_words.join(', ')}</TableCell>
 
         <TableCell align="right">
           <IconButton onClick={handleOpenMenu}>
@@ -94,12 +103,14 @@ export default function UserTableRow({
 }
 
 UserTableRow.propTypes = {
-  avatarUrl: PropTypes.any,
-  company: PropTypes.any,
+  selected: PropTypes.bool,
+  twitter: PropTypes.string,
+  name: PropTypes.string,
+  description: PropTypes.string,
+  star: PropTypes.string,
+  recommend: PropTypes.string,
+  score: PropTypes.string,
+  photo: PropTypes.string,
+  key_words: PropTypes.arrayOf(PropTypes.string),
   handleClick: PropTypes.func,
-  isVerified: PropTypes.any,
-  name: PropTypes.any,
-  role: PropTypes.any,
-  selected: PropTypes.any,
-  status: PropTypes.string,
 };
