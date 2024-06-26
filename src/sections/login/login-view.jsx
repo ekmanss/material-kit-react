@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -20,28 +20,62 @@ import { bgGradient } from 'src/theme/css';
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
 
-// ----------------------------------------------------------------------
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from '../../slices/AuthSlice';
 
 export default function LoginView() {
   const theme = useTheme();
-
   const router = useRouter();
-
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { isLoggedIn } = useSelector((state) => state.auth);
+  const [values, setValues] = useState({
+    username: '',
+    password: '',
+  });
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.push('/user');
+    }
+  }, [isLoggedIn, router]);
 
   const handleClick = () => {
-    router.push('/dashboard');
+    setLoading(true);
+    const { username, password } = values;
+    dispatch(login({ username, password }))
+      .unwrap()
+      .then(() => {
+        // 登录成功后,isLoggedIn 会被更新,触发上面的 useEffect
+      })
+      .catch(() => {
+        setLoading(false);
+        // 这里可以添加错误处理,比如显示错误消息
+      });
+  };
+
+  const handleChange = (e) => {
+    setValues({
+      ...values,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const renderForm = (
     <>
       <Stack spacing={3}>
-        <TextField name="email" label="Email address" />
+        <TextField
+          name="username"
+          label="Username"
+          onChange={handleChange}
+        />
 
         <TextField
           name="password"
           label="Password"
           type={showPassword ? 'text' : 'password'}
+          onChange={handleChange}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -67,11 +101,16 @@ export default function LoginView() {
         variant="contained"
         color="inherit"
         onClick={handleClick}
+        loading={loading}
       >
         Login
       </LoadingButton>
     </>
   );
+
+  if (isLoggedIn) {
+    return null; // 或者显示一个加载指示器
+  }
 
   return (
     <Box
@@ -102,7 +141,7 @@ export default function LoginView() {
           <Typography variant="h4">Sign in to Minimal</Typography>
 
           <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
-            Don’t have an account?
+            Don't have an account?
             <Link variant="subtitle2" sx={{ ml: 0.5 }}>
               Get started
             </Link>

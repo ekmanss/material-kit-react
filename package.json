@@ -20,6 +20,9 @@
     "vite:build": "vite build"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^1.9.1",
+    "react-redux": "^8.0.5",
+    "axios": "^0.24.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@faker-js/faker": "^8.1.0",
