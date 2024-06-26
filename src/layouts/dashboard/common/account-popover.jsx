@@ -94,24 +94,24 @@ export default function AccountPopover() {
           },
         }}
       >
-        <Box sx={{ my: 1.5, px: 2 }}>
-          <Typography variant="subtitle2" noWrap>
-            {account.displayName}
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
-          </Typography>
-        </Box>
+        {/*<Box sx={{ my: 1.5, px: 2 }}>*/}
+        {/*  <Typography variant="subtitle2" noWrap>*/}
+        {/*    {account.displayName}*/}
+        {/*  </Typography>*/}
+        {/*  <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>*/}
+        {/*    {account.email}*/}
+        {/*  </Typography>*/}
+        {/*</Box>*/}
 
-        <Divider sx={{ borderStyle: 'dashed' }} />
+        {/*<Divider sx={{ borderStyle: 'dashed' }} />*/}
 
-        {MENU_OPTIONS.map((option) => (
-          <MenuItem key={option.label} onClick={handleClose}>
-            {option.label}
-          </MenuItem>
-        ))}
+        {/*{MENU_OPTIONS.map((option) => (*/}
+        {/*  <MenuItem key={option.label} onClick={handleClose}>*/}
+        {/*    {option.label}*/}
+        {/*  </MenuItem>*/}
+        {/*))}*/}
 
-        <Divider sx={{ borderStyle: 'dashed', m: 0 }} />
+        {/*<Divider sx={{ borderStyle: 'dashed', m: 0 }} />*/}
 
         <MenuItem
           disableRipple
