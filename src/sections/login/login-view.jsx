@@ -99,9 +99,9 @@ export default function LoginView() {
       </Stack>
 
       <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ my: 3 }}>
-        <Link variant="subtitle2" underline="hover">
-          Forgot password?
-        </Link>
+        {/*<Link variant="subtitle2" underline="hover">*/}
+        {/*  Forgot password?*/}
+        {/*</Link>*/}
       </Stack>
 
       <LoadingButton
@@ -148,52 +148,52 @@ export default function LoginView() {
             maxWidth: 420,
           }}
         >
-          <Typography variant="h4">Sign in to Minimal</Typography>
+          {/*<Typography variant="h4">Sign in to Minimal</Typography>*/}
 
-          <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
-            Don&apos;t have an account?
-            <Link variant="subtitle2" sx={{ ml: 0.5 }}>
-              Get started
-            </Link>
-          </Typography>
+          {/*<Typography variant="body2" sx={{ mt: 2, mb: 5 }}>*/}
+          {/*  Don&apos;t have an account?*/}
+          {/*  <Link variant="subtitle2" sx={{ ml: 0.5 }}>*/}
+          {/*    Get started*/}
+          {/*  </Link>*/}
+          {/*</Typography>*/}
 
-          <Stack direction="row" spacing={2}>
-            <Button
-              fullWidth
-              size="large"
-              color="inherit"
-              variant="outlined"
-              sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
-            >
-              <Iconify icon="eva:google-fill" color="#DF3E30" />
-            </Button>
+          {/*<Stack direction="row" spacing={2}>*/}
+          {/*  <Button*/}
+          {/*    fullWidth*/}
+          {/*    size="large"*/}
+          {/*    color="inherit"*/}
+          {/*    variant="outlined"*/}
+          {/*    sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}*/}
+          {/*  >*/}
+          {/*    <Iconify icon="eva:google-fill" color="#DF3E30" />*/}
+          {/*  </Button>*/}
 
-            <Button
-              fullWidth
-              size="large"
-              color="inherit"
-              variant="outlined"
-              sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
-            >
-              <Iconify icon="eva:facebook-fill" color="#1877F2" />
-            </Button>
+          {/*  <Button*/}
+          {/*    fullWidth*/}
+          {/*    size="large"*/}
+          {/*    color="inherit"*/}
+          {/*    variant="outlined"*/}
+          {/*    sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}*/}
+          {/*  >*/}
+          {/*    <Iconify icon="eva:facebook-fill" color="#1877F2" />*/}
+          {/*  </Button>*/}
 
-            <Button
-              fullWidth
-              size="large"
-              color="inherit"
-              variant="outlined"
-              sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
-            >
-              <Iconify icon="eva:twitter-fill" color="#1C9CEA" />
-            </Button>
-          </Stack>
+          {/*  <Button*/}
+          {/*    fullWidth*/}
+          {/*    size="large"*/}
+          {/*    color="inherit"*/}
+          {/*    variant="outlined"*/}
+          {/*    sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}*/}
+          {/*  >*/}
+          {/*    <Iconify icon="eva:twitter-fill" color="#1C9CEA" />*/}
+          {/*  </Button>*/}
+          {/*</Stack>*/}
 
-          <Divider sx={{ my: 3 }}>
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              OR
-            </Typography>
-          </Divider>
+          {/*<Divider sx={{ my: 3 }}>*/}
+          {/*  <Typography variant="body2" sx={{ color: 'text.secondary' }}>*/}
+          {/*    OR*/}
+          {/*  </Typography>*/}
+          {/*</Divider>*/}
 
           {renderForm}
         </Card>
