@@ -2,11 +2,11 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:6060/auth/';
 
-const register = (username, email, password) => axios.post(`${API_URL  }signup`, {
-    username, email, password,
-  });
+const register = (username, email, password) => axios.post(`${API_URL}signup`, {
+  username, email, password,
+});
 
-const login = (username, password) =>
+const login = (username, password) => new Promise((resolve, reject) => {
   // return axios
   //     .post(API_URL + "signin", {
   //         username,
@@ -21,21 +21,19 @@ const login = (username, password) =>
   //         return { code, data };
   //     });
 
-  // 模拟成功的登录响应
-   new Promise((resolve) => {
-    setTimeout(() => {
+  setTimeout(() => {
+    if (Math.random() < 1) {  // 80% 成功率
       const mockUser = {
-        id: 1,
-        username,
-        email: `${username}@example.com`,
-        roles: ['ROLE_USER'],
-        accessToken: 'mock-jwt-token',
+        id: 1, username, email: `${username}@example.com`, roles: ['ROLE_USER'], accessToken: 'mock-jwt-token',
       };
       localStorage.setItem('user', JSON.stringify(mockUser));
       resolve({ code: 200, data: mockUser });
-    }, 500); // 模拟网络延迟
-  })
-;
+    } else {
+      // 使用 Error 对象来 reject
+      reject(new Error('Invalid username or password'));
+    }
+  }, 500); // 模拟网络延迟
+});
 
 const logout = () => {
   localStorage.removeItem('user');

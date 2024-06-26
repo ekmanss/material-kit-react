@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
+import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
@@ -20,7 +22,6 @@ import { bgGradient } from 'src/theme/css';
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
 
-import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../../slices/AuthSlice';
 
 export default function LoginView() {
@@ -29,6 +30,7 @@ export default function LoginView() {
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const { isLoggedIn } = useSelector((state) => state.auth);
   const [values, setValues] = useState({
     username: '',
@@ -43,15 +45,18 @@ export default function LoginView() {
 
   const handleClick = () => {
     setLoading(true);
+    setError('');
     const { username, password } = values;
     dispatch(login({ username, password }))
       .unwrap()
       .then(() => {
         // 登录成功后,isLoggedIn 会被更新,触发上面的 useEffect
       })
-      .catch(() => {
+      .catch((err) => {
         setLoading(false);
-        // 这里可以添加错误处理,比如显示错误消息
+        setError('Invalid username or password');
+        // 如果你的错误对象有具体的错误信息,可以使用它
+        // setError(err.message);
       });
   };
 
@@ -64,6 +69,11 @@ export default function LoginView() {
 
   const renderForm = (
     <>
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {error}
+        </Alert>
+      )}
       <Stack spacing={3}>
         <TextField
           name="username"
@@ -141,7 +151,7 @@ export default function LoginView() {
           <Typography variant="h4">Sign in to Minimal</Typography>
 
           <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
-            Don't have an account?
+            Don&apos;t have an account?
             <Link variant="subtitle2" sx={{ ml: 0.5 }}>
               Get started
             </Link>
