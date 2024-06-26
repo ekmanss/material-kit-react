@@ -24,6 +24,7 @@ build
 .env.production.local
 
 # misc
+.idea
 .DS_Store
 .vercel
 .netlify
