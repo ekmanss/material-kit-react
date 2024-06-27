@@ -1,6 +1,6 @@
 const config = {
   development: {
-    API_URL: 'http://localhost:6060',
+    API_URL: 'https://lfgapitest.roguex.io',
   },
   test: {
     API_URL: 'https://lfgapitest.roguex.io',
