@@ -34,6 +34,7 @@ export default function UserTableRow({
                                        key_words,
                                        handleClick,
                                        onEditClick, // Add this prop
+                                       onDeleteClick,
                                      }) {
   const [open, setOpen] = useState(null);
 
@@ -50,62 +51,65 @@ export default function UserTableRow({
     handleCloseMenu();
   };
 
-  return (
-    <>
-      <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
-        <TableCell padding="checkbox">
-          <Checkbox disableRipple checked={selected} onChange={handleClick} />
-        </TableCell>
+  const handleDelete = () => {
+    onDeleteClick(); // 不需要再传递 id，因为我们在父组件中已经处理了
+    handleCloseMenu();
+  };
 
-        <TableCell component="th" scope="row" padding="none">
-          <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar alt={name} src={photo} />
-            <Typography variant="subtitle2" noWrap>
-              {name}
-            </Typography>
-          </Stack>
-        </TableCell>
+  return (<>
+    <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
+      <TableCell padding="checkbox">
+        <Checkbox disableRipple checked={selected} onChange={handleClick} />
+      </TableCell>
 
-        <TableCell>{twitter}</TableCell>
-        <TableCell>{description}</TableCell>
-        <TableCell>{star}</TableCell>
-        <TableCell>{recommend}</TableCell>
-        <TableCell>
-          <Label color={getScoreColor(Number(score))}>
-            {score}
-          </Label>
-        </TableCell>
-        <TableCell>{key_words.join(', ')}</TableCell>
+      <TableCell component="th" scope="row" padding="none">
+        <Stack direction="row" alignItems="center" spacing={2}>
+          <Avatar alt={name} src={photo} />
+          <Typography variant="subtitle2" noWrap>
+            {name}
+          </Typography>
+        </Stack>
+      </TableCell>
 
-        <TableCell align="right">
-          <IconButton onClick={handleOpenMenu}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
-        </TableCell>
-      </TableRow>
+      <TableCell>{twitter}</TableCell>
+      <TableCell>{description}</TableCell>
+      <TableCell>{star}</TableCell>
+      <TableCell>{recommend}</TableCell>
+      <TableCell>
+        <Label color={getScoreColor(Number(score))}>
+          {score}
+        </Label>
+      </TableCell>
+      <TableCell>{key_words.join(', ')}</TableCell>
 
-      <Popover
-        open={!!open}
-        anchorEl={open}
-        onClose={handleCloseMenu}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        PaperProps={{
-          sx: { width: 140 },
-        }}
-      >
-        <MenuItem onClick={handleEdit}>
-          <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
-          Edit
-        </MenuItem>
+      <TableCell align="right">
+        <IconButton onClick={handleOpenMenu}>
+          <Iconify icon="eva:more-vertical-fill" />
+        </IconButton>
+      </TableCell>
+    </TableRow>
 
-        <MenuItem onClick={handleCloseMenu} sx={{ color: 'error.main' }}>
-          <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
-          Delete
-        </MenuItem>
-      </Popover>
-    </>
-  );
+    <Popover
+      open={!!open}
+      anchorEl={open}
+      onClose={handleCloseMenu}
+      anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      PaperProps={{
+        sx: { width: 140 },
+      }}
+    >
+      <MenuItem onClick={handleEdit}>
+        <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
+        Edit
+      </MenuItem>
+
+      <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
+        <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
+        Delete
+      </MenuItem>
+    </Popover>
+  </>);
 }
 
 UserTableRow.propTypes = {
@@ -120,4 +124,5 @@ UserTableRow.propTypes = {
   key_words: PropTypes.arrayOf(PropTypes.string),
   handleClick: PropTypes.func,
   onEditClick: PropTypes.func, // Add this prop type
+  onDeleteClick: PropTypes.func,
 };
