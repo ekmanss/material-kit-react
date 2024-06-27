@@ -23,6 +23,7 @@ import { useKols } from 'src/hooks/useKols';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 
+import AddKolModal from '../AddKolModal';
 import TableNoData from '../table-no-data';
 import EditKolModal from '../edit-kol-modal';
 import UserTableRow from '../user-table-row';
@@ -39,12 +40,16 @@ export default function KolPage() {
     error,
     updateKol,
     deleteKol,
+    createKol,
     isUpdating,
     isDeleting,
+    isCreating,
     updateSuccess,
     deleteSuccess,
+    createSuccess,
     updateError,
     deleteError,
+    createError,
   } = useKols();
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingKol, setEditingKol] = useState(null);
@@ -58,6 +63,7 @@ export default function KolPage() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletingKolId, setDeletingKolId] = useState(null);
+  const [addModalOpen, setAddModalOpen] = useState(false);
 
   useEffect(() => {
     if (updateSuccess) {
@@ -78,6 +84,26 @@ export default function KolPage() {
       setSnackbar({ open: true, message: errorMessage, severity: 'error' });
     }
   }, [updateSuccess, deleteSuccess, updateError, deleteError]);
+
+  useEffect(() => {
+    if (createSuccess) {
+      setSnackbar({ open: true, message: 'KOL created successfully!', severity: 'success' });
+    }
+    if (createError) {
+      let errorMessage = 'Error occurred while creating KOL';
+      if (createError.response && createError.response.data) {
+        const { error: api_error, message: api_message } = createError.response.data;
+        errorMessage = `${errorMessage}: ${api_error}. ${api_message}`;
+      } else if (createError.message) {
+        errorMessage = `${errorMessage}: ${createError.message}`;
+      }
+      setSnackbar({ open: true, message: errorMessage, severity: 'error' });
+    }
+  }, [createSuccess, createError]);
+
+  const handleAddKol = (newKol) => {
+    createKol(newKol);
+  };
 
   const handleDeleteKol = (id) => {
     setDeletingKolId(id);
@@ -187,7 +213,12 @@ export default function KolPage() {
     <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
       <Typography variant="h4">KOLs</Typography>
 
-      <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
+      <Button
+        variant="contained"
+        color="inherit"
+        startIcon={<Iconify icon="eva:plus-fill" />}
+        onClick={() => setAddModalOpen(true)}
+      >
         New KOL
       </Button>
     </Stack>
@@ -256,6 +287,12 @@ export default function KolPage() {
       />
     </Card>
 
+    <AddKolModal
+      open={addModalOpen}
+      handleClose={() => setAddModalOpen(false)}
+      onAdd={handleAddKol}
+    />
+
     <EditKolModal
       open={editModalOpen}
       handleClose={handleCloseEditModal}
@@ -274,12 +311,18 @@ export default function KolPage() {
       </Alert>
     </Snackbar>
 
-    {(isUpdating || isDeleting) && (<CircularProgress
-      size={24}
-      sx={{
-        position: 'fixed', top: '50%', left: '50%', marginTop: '-12px', marginLeft: '-12px',
-      }}
-    />)}
+    {(isUpdating || isDeleting || isCreating) && (
+      <CircularProgress
+        size={24}
+        sx={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          marginTop: '-12px',
+          marginLeft: '-12px',
+        }}
+      />
+    )}
 
     <Dialog
       open={deleteDialogOpen}

@@ -23,3 +23,8 @@ export const deleteKol = async (id) => {
   const response = await axios.delete(`${API_URL}/kol/${id}`);
   return response.data;
 };
+
+export const createKol = async (kolData) => {
+  const response = await axios.post(`${API_URL}/kol`, kolData);
+  return response.data;
+};

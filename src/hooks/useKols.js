@@ -23,15 +23,26 @@ export const useKols = () => {
     },
   });
 
+  const createMutation = useMutation({
+    mutationFn: kolService.createKol,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['kols']);
+    },
+  });
+
   return {
     ...query,
     updateKol: updateMutation.mutate,
     deleteKol: deleteMutation.mutate,
+    createKol: createMutation.mutate,
     isUpdating: updateMutation.isLoading,
     isDeleting: deleteMutation.isLoading,
+    isCreating: createMutation.isLoading,
     updateSuccess: updateMutation.isSuccess,
     deleteSuccess: deleteMutation.isSuccess,
+    createSuccess: createMutation.isSuccess,
     updateError: updateMutation.error,
     deleteError: deleteMutation.error,
+    createError: createMutation.error,
   };
 };
