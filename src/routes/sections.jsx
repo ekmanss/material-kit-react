@@ -29,7 +29,7 @@ export default function Router() {
 
       ),
       children: [
-        { element: <UserPage />, index: true },
+        { element: <KolPage />, index: true },
         { path: 'user', element: <UserPage /> },
         { path: 'kol', element: <KolPage /> },
         { path: 'products', element: <ProductsPage /> },

@@ -39,7 +39,7 @@ export default function LoginView() {
 
   useEffect(() => {
     if (isLoggedIn) {
-      router.push('/user');
+      router.push('/');
     }
   }, [isLoggedIn, router]);
 
