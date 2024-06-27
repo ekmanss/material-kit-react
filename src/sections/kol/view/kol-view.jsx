@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useKols } from 'src/hooks/useKols';
 import EditKolModal from '../edit-kol-modal';
 
@@ -13,6 +13,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
@@ -24,13 +25,11 @@ import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
-// ----------------------------------------------------------------------
-
 export default function KolPage() {
-  const { data, isLoading, isError, error, updateKol } = useKols();
+  const { data, isLoading, isError, error, updateKol, isUpdating, updateSuccess, updateError } = useKols();
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingKol, setEditingKol] = useState(null);
-
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -39,7 +38,29 @@ export default function KolPage() {
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  // 处理加载状态
+  useEffect(() => {
+    if (updateSuccess) {
+      setSnackbar({ open: true, message: 'KOL updated successfully!', severity: 'success' });
+    }
+    if (updateError) {
+      let errorMessage = 'Error updating KOL';
+      if (updateError.response && updateError.response.data) {
+        const { error: api_error, message: api_message } = updateError.response.data;
+        errorMessage = `${errorMessage}: ${api_error}. ${api_message}`;
+      } else if (updateError.message) {
+        errorMessage = `${errorMessage}: ${updateError.message}`;
+      }
+      setSnackbar({ open: true, message: errorMessage, severity: 'error' });
+    }
+  }, [updateSuccess, updateError]);
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   if (isLoading) {
     return (
       <Container>
@@ -48,7 +69,6 @@ export default function KolPage() {
     );
   }
 
-  // 处理错误状态
   if (isError) {
     return (
       <Container>
@@ -57,7 +77,6 @@ export default function KolPage() {
     );
   }
 
-  // 确保 kols 是一个数组
   const kols = data?.kols || [];
 
   const handleEditClick = (kol) => {
@@ -217,6 +236,30 @@ export default function KolPage() {
         kol={editingKol}
         onUpdate={handleUpdateKol}
       />
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+
+      {isUpdating && (
+        <CircularProgress
+          size={24}
+          sx={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            marginTop: '-12px',
+            marginLeft: '-12px',
+          }}
+        />
+      )}
     </Container>
   );
 }

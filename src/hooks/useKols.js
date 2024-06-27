@@ -20,5 +20,7 @@ export const useKols = () => {
     ...query,
     updateKol: updateMutation.mutate,
     isUpdating: updateMutation.isLoading,
+    updateSuccess: updateMutation.isSuccess,
+    updateError: updateMutation.error,
   };
 };
