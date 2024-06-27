@@ -1,15 +1,24 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as kolService from '../services/kol';
 
-export const useKols = () => useQuery({
+export const useKols = () => {
+  const queryClient = useQueryClient();
+
+  const query = useQuery({
     queryKey: ['kols'],
     queryFn: kolService.fetchKols,
   });
 
-export const useKol = (id) => useQuery({
-    queryKey: ['user', id],
-    queryFn: () => kolService.fetchUserById(id),
-    enabled: !!id,
+  const updateMutation = useMutation({
+    mutationFn: kolService.updateKol,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['kols']);
+    },
   });
 
-// 如需添加、更新或删除用户，可以添加相应的 mutation hooks
+  return {
+    ...query,
+    updateKol: updateMutation.mutate,
+    isUpdating: updateMutation.isLoading,
+  };
+};

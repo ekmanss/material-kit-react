@@ -33,6 +33,7 @@ export default function UserTableRow({
                                        photo,
                                        key_words,
                                        handleClick,
+                                       onEditClick, // Add this prop
                                      }) {
   const [open, setOpen] = useState(null);
 
@@ -42,6 +43,11 @@ export default function UserTableRow({
 
   const handleCloseMenu = () => {
     setOpen(null);
+  };
+
+  const handleEdit = () => {
+    onEditClick(); // Call the edit function passed from the parent
+    handleCloseMenu();
   };
 
   return (
@@ -88,7 +94,7 @@ export default function UserTableRow({
           sx: { width: 140 },
         }}
       >
-        <MenuItem onClick={handleCloseMenu}>
+        <MenuItem onClick={handleEdit}>
           <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
           Edit
         </MenuItem>
@@ -113,4 +119,5 @@ UserTableRow.propTypes = {
   photo: PropTypes.string,
   key_words: PropTypes.arrayOf(PropTypes.string),
   handleClick: PropTypes.func,
+  onEditClick: PropTypes.func, // Add this prop type
 };

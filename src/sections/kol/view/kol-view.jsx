@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useKols } from 'src/hooks/useKols';
+import EditKolModal from '../edit-kol-modal';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -26,7 +27,10 @@ import { emptyRows, applyFilter, getComparator } from '../utils';
 // ----------------------------------------------------------------------
 
 export default function KolPage() {
-  const { data, isLoading, isError, error } = useKols();
+  const { data, isLoading, isError, error, updateKol } = useKols();
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editingKol, setEditingKol] = useState(null);
+
 
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -55,6 +59,20 @@ export default function KolPage() {
 
   // 确保 kols 是一个数组
   const kols = data?.kols || [];
+
+  const handleEditClick = (kol) => {
+    setEditingKol(kol);
+    setEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setEditModalOpen(false);
+    setEditingKol(null);
+  };
+
+  const handleUpdateKol = (updatedKol) => {
+    updateKol(updatedKol);
+  };
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -167,6 +185,7 @@ export default function KolPage() {
                       key_words={row.key_words}
                       selected={selected.indexOf(row.name) !== -1}
                       handleClick={(event) => handleClick(event, row.name)}
+                      onEditClick={() => handleEditClick(row)}
                     />
                   ))}
 
@@ -191,6 +210,13 @@ export default function KolPage() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Card>
+
+      <EditKolModal
+        open={editModalOpen}
+        handleClose={handleCloseEditModal}
+        kol={editingKol}
+        onUpdate={handleUpdateKol}
+      />
     </Container>
   );
 }
