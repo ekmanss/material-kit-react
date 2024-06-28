@@ -15,31 +15,49 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 
-export default function EditBacktestModal({ open, handleClose, backtest, onUpdate }) {
-  const [editedBacktest, setEditedBacktest] = useState(backtest || {});
+export default function AddBacktestModal({ open, handleClose, onAdd, kolId }) {
+  const [newBacktest, setNewBacktest] = useState({
+    kol_id: kolId,
+    token_name: '',
+    token_address: '',
+    token_logo: '',
+    time_stamp: dayjs().unix(),
+    call_time: dayjs().unix(),
+    high_time: dayjs().unix(),
+    low_time: dayjs().unix(),
+    call_price: '',
+    high_price: '',
+    low_price: '',
+    more_change: '',
+    less_change: '',
+    harvest_duration: '',
+    current_price: '',
+    current_marketcap: '',
+    score: '',
+    type: '',
+    btc_more_change: '',
+  });
 
   useEffect(() => {
-    if (backtest) {
-      setEditedBacktest(backtest);
-    }
-  }, [backtest]);
+    setNewBacktest(prev => ({ ...prev, kol_id: kolId }));
+  }, [kolId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setEditedBacktest(prev => ({ ...prev, [name]: value }));
+    setNewBacktest(prev => ({ ...prev, [name]: value }));
   };
 
   const handleDateChange = (name) => (date) => {
-    setEditedBacktest(prev => ({ ...prev, [name]: date.unix() }));
+    setNewBacktest(prev => ({ ...prev, [name]: date.unix() }));
   };
 
   const handleSubmit = () => {
-    onUpdate(editedBacktest);
+    onAdd(newBacktest);
   };
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
-      <DialogTitle>Edit Backtest Data</DialogTitle>
+      <DialogTitle>Add New Backtest Data</DialogTitle>
       <DialogContent>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <Grid container spacing={3}>
@@ -53,7 +71,7 @@ export default function EditBacktestModal({ open, handleClose, backtest, onUpdat
                 margin="normal"
                 name="kol_id"
                 label="KOL ID"
-                value={editedBacktest.kol_id || ''}
+                value={newBacktest.kol_id}
                 disabled
               />
             </Grid>
@@ -63,7 +81,7 @@ export default function EditBacktestModal({ open, handleClose, backtest, onUpdat
                 margin="normal"
                 name="token_name"
                 label="Token Name"
-                value={editedBacktest.token_name || ''}
+                value={newBacktest.token_name}
                 onChange={handleChange}
               />
             </Grid>
@@ -73,7 +91,7 @@ export default function EditBacktestModal({ open, handleClose, backtest, onUpdat
                 margin="normal"
                 name="token_address"
                 label="Token Address"
-                value={editedBacktest.token_address || ''}
+                value={newBacktest.token_address}
                 onChange={handleChange}
               />
             </Grid>
@@ -83,7 +101,7 @@ export default function EditBacktestModal({ open, handleClose, backtest, onUpdat
                 margin="normal"
                 name="token_logo"
                 label="Token Logo URL"
-                value={editedBacktest.token_logo || ''}
+                value={newBacktest.token_logo}
                 onChange={handleChange}
               />
             </Grid>
@@ -95,7 +113,7 @@ export default function EditBacktestModal({ open, handleClose, backtest, onUpdat
             <Grid item xs={12} sm={6}>
               <DateTimePicker
                 label="Backtest Time"
-                value={dayjs.unix(editedBacktest.time_stamp)}
+                value={dayjs.unix(newBacktest.time_stamp)}
                 onChange={handleDateChange('time_stamp')}
                 renderInput={(params) => <TextField {...params} fullWidth margin="normal" />}
               />
@@ -103,7 +121,7 @@ export default function EditBacktestModal({ open, handleClose, backtest, onUpdat
             <Grid item xs={12} sm={6}>
               <DateTimePicker
                 label="Call Time"
-                value={dayjs.unix(editedBacktest.call_time)}
+                value={dayjs.unix(newBacktest.call_time)}
                 onChange={handleDateChange('call_time')}
                 renderInput={(params) => <TextField {...params} fullWidth margin="normal" />}
               />
@@ -111,7 +129,7 @@ export default function EditBacktestModal({ open, handleClose, backtest, onUpdat
             <Grid item xs={12} sm={6}>
               <DateTimePicker
                 label="Highest Price Time"
-                value={dayjs.unix(editedBacktest.high_time)}
+                value={dayjs.unix(newBacktest.high_time)}
                 onChange={handleDateChange('high_time')}
                 renderInput={(params) => <TextField {...params} fullWidth margin="normal" />}
               />
@@ -119,7 +137,7 @@ export default function EditBacktestModal({ open, handleClose, backtest, onUpdat
             <Grid item xs={12} sm={6}>
               <DateTimePicker
                 label="Lowest Price Time"
-                value={dayjs.unix(editedBacktest.low_time)}
+                value={dayjs.unix(newBacktest.low_time)}
                 onChange={handleDateChange('low_time')}
                 renderInput={(params) => <TextField {...params} fullWidth margin="normal" />}
               />
@@ -135,7 +153,7 @@ export default function EditBacktestModal({ open, handleClose, backtest, onUpdat
                 margin="normal"
                 name="call_price"
                 label="Call Price ($)"
-                value={editedBacktest.call_price || ''}
+                value={newBacktest.call_price}
                 onChange={handleChange}
               />
             </Grid>
@@ -145,7 +163,7 @@ export default function EditBacktestModal({ open, handleClose, backtest, onUpdat
                 margin="normal"
                 name="high_price"
                 label="Highest Price ($)"
-                value={editedBacktest.high_price || ''}
+                value={newBacktest.high_price}
                 onChange={handleChange}
               />
             </Grid>
@@ -155,7 +173,7 @@ export default function EditBacktestModal({ open, handleClose, backtest, onUpdat
                 margin="normal"
                 name="low_price"
                 label="Lowest Price ($)"
-                value={editedBacktest.low_price || ''}
+                value={newBacktest.low_price}
                 onChange={handleChange}
               />
             </Grid>
@@ -165,7 +183,7 @@ export default function EditBacktestModal({ open, handleClose, backtest, onUpdat
                 margin="normal"
                 name="current_price"
                 label="Current Price ($)"
-                value={editedBacktest.current_price || ''}
+                value={newBacktest.current_price}
                 onChange={handleChange}
               />
             </Grid>
@@ -175,7 +193,7 @@ export default function EditBacktestModal({ open, handleClose, backtest, onUpdat
                 margin="normal"
                 name="current_marketcap"
                 label="Current Market Cap ($)"
-                value={editedBacktest.current_marketcap || ''}
+                value={newBacktest.current_marketcap}
                 onChange={handleChange}
               />
             </Grid>
@@ -190,7 +208,7 @@ export default function EditBacktestModal({ open, handleClose, backtest, onUpdat
                 margin="normal"
                 name="more_change"
                 label="Increase (0~1)"
-                value={editedBacktest.more_change || ''}
+                value={newBacktest.more_change}
                 onChange={handleChange}
               />
             </Grid>
@@ -200,7 +218,7 @@ export default function EditBacktestModal({ open, handleClose, backtest, onUpdat
                 margin="normal"
                 name="less_change"
                 label="Decrease (0~1)"
-                value={editedBacktest.less_change || ''}
+                value={newBacktest.less_change}
                 onChange={handleChange}
               />
             </Grid>
@@ -210,7 +228,7 @@ export default function EditBacktestModal({ open, handleClose, backtest, onUpdat
                 margin="normal"
                 name="btc_more_change"
                 label="BTC Increase (0~1)"
-                value={editedBacktest.btc_more_change || ''}
+                value={newBacktest.btc_more_change}
                 onChange={handleChange}
               />
             </Grid>
@@ -225,7 +243,7 @@ export default function EditBacktestModal({ open, handleClose, backtest, onUpdat
                 margin="normal"
                 name="harvest_duration"
                 label="Harvest Duration"
-                value={editedBacktest.harvest_duration || ''}
+                value={newBacktest.harvest_duration}
                 onChange={handleChange}
               />
             </Grid>
@@ -235,7 +253,7 @@ export default function EditBacktestModal({ open, handleClose, backtest, onUpdat
                 margin="normal"
                 name="score"
                 label="Score"
-                value={editedBacktest.score || ''}
+                value={newBacktest.score}
                 onChange={handleChange}
               />
             </Grid>
@@ -245,7 +263,7 @@ export default function EditBacktestModal({ open, handleClose, backtest, onUpdat
                 margin="normal"
                 name="type"
                 label="Type"
-                value={editedBacktest.type || ''}
+                value={newBacktest.type}
                 onChange={handleChange}
               />
             </Grid>
@@ -254,7 +272,7 @@ export default function EditBacktestModal({ open, handleClose, backtest, onUpdat
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button onClick={handleSubmit} color="primary">Save</Button>
+        <Button onClick={handleSubmit} color="primary">Add</Button>
       </DialogActions>
     </Dialog>
   );

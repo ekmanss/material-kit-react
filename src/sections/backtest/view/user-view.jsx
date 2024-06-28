@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import Card from '@mui/material/Card';
@@ -31,6 +31,7 @@ import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 import EditBacktestModal from '../edit-backtest-modal';
+import AddBacktestModal from '../add-backtest-modal';
 
 export default function UserPage() {
   const { kolId } = useParams();
@@ -41,12 +42,10 @@ export default function UserPage() {
     error,
     updateBacktest,
     deleteBacktest,
+    createBacktest,
     isUpdating,
     isDeleting,
-    updateSuccess,
-    deleteSuccess,
-    updateError,
-    deleteError
+    isCreating,
   } = useBacktests(kolId);
 
   const [page, setPage] = useState(0);
@@ -57,29 +56,10 @@ export default function UserPage() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingBacktest, setEditingBacktest] = useState(null);
+  const [addModalOpen, setAddModalOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletingBacktestId, setDeletingBacktestId] = useState(null);
-
-  useEffect(() => {
-    if (updateSuccess) {
-      setSnackbar({ open: true, message: 'Backtest updated successfully!', severity: 'success' });
-    }
-    if (deleteSuccess) {
-      setSnackbar({ open: true, message: 'Backtest deleted successfully!', severity: 'success' });
-    }
-    if (updateError || deleteError) {
-      let errorMessage = 'Error occurred';
-      const currentError = updateError || deleteError;
-      if (currentError.response && currentError.response.data) {
-        const { error: api_error, message: api_message } = currentError.response.data;
-        errorMessage = `${errorMessage}: ${api_error}. ${api_message}`;
-      } else if (currentError.message) {
-        errorMessage = `${errorMessage}: ${currentError.message}`;
-      }
-      setSnackbar({ open: true, message: errorMessage, severity: 'error' });
-    }
-  }, [updateSuccess, deleteSuccess, updateError, deleteError]);
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -140,8 +120,14 @@ export default function UserPage() {
     setEditingBacktest(null);
   };
 
-  const handleUpdateBacktest = (updatedBacktest) => {
-    updateBacktest(updatedBacktest);
+  const handleUpdateBacktest = async (updatedBacktest) => {
+    try {
+      await updateBacktest(updatedBacktest);
+      setEditModalOpen(false);
+      setSnackbar({ open: true, message: 'Backtest updated successfully!', severity: 'success' });
+    } catch (error) {
+      setSnackbar({ open: true, message: `Error updating backtest: ${error.message}`, severity: 'error' });
+    }
   };
 
   const handleDeleteClick = (id) => {
@@ -149,11 +135,16 @@ export default function UserPage() {
     setDeleteDialogOpen(true);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (deletingBacktestId) {
-      deleteBacktest(deletingBacktestId);
-      setDeleteDialogOpen(false);
-      setDeletingBacktestId(null);
+      try {
+        await deleteBacktest(deletingBacktestId);
+        setDeleteDialogOpen(false);
+        setDeletingBacktestId(null);
+        setSnackbar({ open: true, message: 'Backtest deleted successfully!', severity: 'success' });
+      } catch (error) {
+        setSnackbar({ open: true, message: `Error deleting backtest: ${error.message}`, severity: 'error' });
+      }
     }
   };
 
@@ -167,6 +158,24 @@ export default function UserPage() {
       return;
     }
     setSnackbar({ ...snackbar, open: false });
+  };
+
+  const handleAddClick = () => {
+    setAddModalOpen(true);
+  };
+
+  const handleCloseAddModal = () => {
+    setAddModalOpen(false);
+  };
+
+  const handleAddBacktest = async (newBacktest) => {
+    try {
+      await createBacktest(newBacktest);
+      setAddModalOpen(false);
+      setSnackbar({ open: true, message: 'Backtest created successfully!', severity: 'success' });
+    } catch (error) {
+      setSnackbar({ open: true, message: `Error creating backtest: ${error.message}`, severity: 'error' });
+    }
   };
 
   if (isLoading) {
@@ -199,7 +208,12 @@ export default function UserPage() {
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Back Test Data</Typography>
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
+        <Button
+          variant="contained"
+          color="inherit"
+          startIcon={<Iconify icon="eva:plus-fill" />}
+          onClick={handleAddClick}
+        >
           New Back Test
         </Button>
       </Stack>
@@ -303,6 +317,13 @@ export default function UserPage() {
         onUpdate={handleUpdateBacktest}
       />
 
+      <AddBacktestModal
+        open={addModalOpen}
+        handleClose={handleCloseAddModal}
+        onAdd={handleAddBacktest}
+        kolId={kolId}
+      />
+
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}
@@ -314,7 +335,7 @@ export default function UserPage() {
         </Alert>
       </Snackbar>
 
-      {(isUpdating || isDeleting) && (
+      {(isUpdating || isDeleting || isCreating) && (
         <CircularProgress
           size={24}
           sx={{

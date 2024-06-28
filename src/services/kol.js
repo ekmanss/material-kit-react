@@ -43,3 +43,8 @@ export const deleteBacktest = async (id) => {
   const response = await axios.delete(`${API_URL}/backtest_result/${id}`);
   return response.data;
 };
+
+export const createBacktest = async (backtestData) => {
+  const response = await axios.post(`${API_URL}/backtest_result`, backtestData);
+  return response.data;
+};

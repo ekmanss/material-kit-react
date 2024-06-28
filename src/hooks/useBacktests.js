@@ -23,15 +23,47 @@ export const useBacktests = (kolId) => {
     },
   });
 
+  const createMutation = useMutation({
+    mutationFn: kolService.createBacktest,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['backtests', kolId]);
+    },
+  });
+
+  const updateBacktest = (data) => {
+    return new Promise((resolve, reject) => {
+      updateMutation.mutate(data, {
+        onSuccess: (result) => resolve(result),
+        onError: (error) => reject(error),
+      });
+    });
+  };
+
+  const deleteBacktest = (id) => {
+    return new Promise((resolve, reject) => {
+      deleteMutation.mutate(id, {
+        onSuccess: (result) => resolve(result),
+        onError: (error) => reject(error),
+      });
+    });
+  };
+
+  const createBacktest = (data) => {
+    return new Promise((resolve, reject) => {
+      createMutation.mutate(data, {
+        onSuccess: (result) => resolve(result),
+        onError: (error) => reject(error),
+      });
+    });
+  };
+
   return {
     ...query,
-    updateBacktest: updateMutation.mutate,
-    deleteBacktest: deleteMutation.mutate,
+    updateBacktest,
+    deleteBacktest,
+    createBacktest,
     isUpdating: updateMutation.isLoading,
     isDeleting: deleteMutation.isLoading,
-    updateSuccess: updateMutation.isSuccess,
-    deleteSuccess: deleteMutation.isSuccess,
-    updateError: updateMutation.error,
-    deleteError: deleteMutation.error,
+    isCreating: createMutation.isLoading,
   };
 };
