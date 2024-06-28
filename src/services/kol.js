@@ -33,3 +33,13 @@ export const fetchBacktests = async (kolId) => {
   const response = await axios.get(`${API_URL}/kol_backtest/${kolId}`);
   return response.data;
 };
+
+export const updateBacktest = async (backtestData) => {
+  const response = await axios.put(`${API_URL}/backtest_result/${backtestData.id}`, backtestData);
+  return response.data;
+};
+
+export const deleteBacktest = async (id) => {
+  const response = await axios.delete(`${API_URL}/backtest_result/${id}`);
+  return response.data;
+};
