@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import Card from '@mui/material/Card';
@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 import CircularProgress from '@mui/material/CircularProgress';
+import Snackbar from '@mui/material/Snackbar';
 
 import { useBacktests } from 'src/hooks/useBacktests';
 
@@ -24,13 +25,20 @@ import UserTableHead from '../user-table-head';
 import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
-
-
-// ----------------------------------------------------------------------
+import EditBacktestModal from '../edit-backtest-modal';
 
 export default function UserPage() {
   const { kolId } = useParams();
-  const { data, isLoading, isError, error } = useBacktests(kolId);
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    updateBacktest,
+    isUpdating,
+    updateSuccess,
+    updateError
+  } = useBacktests(kolId);
 
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -38,6 +46,25 @@ export default function UserPage() {
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editingBacktest, setEditingBacktest] = useState(null);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+
+  useEffect(() => {
+    if (updateSuccess) {
+      setSnackbar({ open: true, message: 'Backtest updated successfully!', severity: 'success' });
+    }
+    if (updateError) {
+      let errorMessage = 'Error occurred while updating backtest';
+      if (updateError.response && updateError.response.data) {
+        const { error: api_error, message: api_message } = updateError.response.data;
+        errorMessage = `${errorMessage}: ${api_error}. ${api_message}`;
+      } else if (updateError.message) {
+        errorMessage = `${errorMessage}: ${updateError.message}`;
+      }
+      setSnackbar({ open: true, message: errorMessage, severity: 'error' });
+    }
+  }, [updateSuccess, updateError]);
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -86,6 +113,27 @@ export default function UserPage() {
   const handleFilterByName = (event) => {
     setPage(0);
     setFilterName(event.target.value);
+  };
+
+  const handleEditClick = (backtest) => {
+    setEditingBacktest(backtest);
+    setEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setEditModalOpen(false);
+    setEditingBacktest(null);
+  };
+
+  const handleUpdateBacktest = (updatedBacktest) => {
+    updateBacktest(updatedBacktest);
+  };
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbar({ ...snackbar, open: false });
   };
 
   if (isLoading) {
@@ -169,6 +217,7 @@ export default function UserPage() {
                       type={row.type}
                       selected={selected.indexOf(row.token_name) !== -1}
                       handleClick={(event) => handleClick(event, row.token_name)}
+                      onEditClick={() => handleEditClick(row)}
                     />
                   ))}
 
@@ -193,6 +242,37 @@ export default function UserPage() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Card>
+
+      <EditBacktestModal
+        open={editModalOpen}
+        handleClose={handleCloseEditModal}
+        backtest={editingBacktest}
+        onUpdate={handleUpdateBacktest}
+      />
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+
+      {isUpdating && (
+        <CircularProgress
+          size={24}
+          sx={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            marginTop: '-12px',
+            marginLeft: '-12px',
+          }}
+        />
+      )}
     </Container>
   );
 }
