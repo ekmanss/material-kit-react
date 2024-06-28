@@ -15,32 +15,32 @@ import {
   FormControl,
 } from '@mui/material';
 
+const predefinedKeywords = ["AI", "All", "Alpha", "BTC", "Defi", "GameFi", "NFT", "memeCoin", "链上数据分析", "二级市场", "撸毛"];
+
 export default function AddKolModal({ open, handleClose, onAdd }) {
   const [newKol, setNewKol] = useState({
     twitter: '',
     name: '',
     description: '',
-    star: '',  // 改为字符串
-    recommend: '',  // 改为字符串
-    score: '',  // 改为字符串
+    star: '',
+    recommend: '',
+    score: '',
     photo: '',
     language: '',
     key_words: [],
   });
-  const [newKeyword, setNewKeyword] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewKol(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleAddKeyword = () => {
-    if (newKeyword && !newKol.key_words.includes(newKeyword)) {
+  const handleAddKeyword = (keyword) => {
+    if (!newKol.key_words.includes(keyword)) {
       setNewKol(prev => ({
         ...prev,
-        key_words: [...prev.key_words, newKeyword],
+        key_words: [...prev.key_words, keyword],
       }));
-      setNewKeyword('');
     }
   };
 
@@ -52,7 +52,6 @@ export default function AddKolModal({ open, handleClose, onAdd }) {
   };
 
   const handleSubmit = () => {
-    // 不需要转换为数字，直接传递字符串
     onAdd({
       ...newKol,
     });
@@ -132,24 +131,30 @@ export default function AddKolModal({ open, handleClose, onAdd }) {
           >
             <MenuItem value="en">English</MenuItem>
             <MenuItem value="zh">Chinese</MenuItem>
-            {/* Add more language options as needed */}
           </Select>
         </FormControl>
-        <Box mt={2}>
-          <TextField
-            value={newKeyword}
-            onChange={(e) => setNewKeyword(e.target.value)}
+        <FormControl fullWidth margin="normal">
+          <InputLabel id="keyword-select-label">Add Keyword</InputLabel>
+          <Select
+            labelId="keyword-select-label"
+            value=""
+            onChange={(e) => handleAddKeyword(e.target.value)}
             label="Add Keyword"
-          />
-          <Button onClick={handleAddKeyword}>Add</Button>
-        </Box>
-        <Box mt={2}>
+          >
+            {predefinedKeywords.map((keyword) => (
+              <MenuItem key={keyword} value={keyword}>{keyword}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <Box mt={2} sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
           {newKol.key_words.map((keyword, index) => (
             <Chip
               key={index}
               label={keyword}
               onDelete={() => handleDeleteKeyword(keyword)}
-              style={{ margin: '0 5px 5px 0' }}
+              color="primary"
+              variant="outlined"
             />
           ))}
         </Box>
