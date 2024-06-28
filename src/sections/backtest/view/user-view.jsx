@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
+import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
@@ -11,28 +12,30 @@ import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 import CircularProgress from '@mui/material/CircularProgress';
-import Alert from '@mui/material/Alert';
 
 import { useBacktests } from 'src/hooks/useBacktests';
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 
-import BacktestTableRow from '../backtest-table-row';
-import BacktestTableHead from '../backtest-table-head';
-import TableEmptyRows from '../table-empty-rows';
-import BacktestTableToolbar from '../backtest-table-toolbar';
 import TableNoData from '../table-no-data';
-import { emptyRows, applyFilter, getComparator } from '../../kol/utils';
+import UserTableRow from '../user-table-row';
+import UserTableHead from '../user-table-head';
+import TableEmptyRows from '../table-empty-rows';
+import UserTableToolbar from '../user-table-toolbar';
+import { emptyRows, applyFilter, getComparator } from '../utils';
 
-export default function BacktestsView() {
+
+// ----------------------------------------------------------------------
+
+export default function UserPage() {
   const { kolId } = useParams();
   const { data, isLoading, isError, error } = useBacktests(kolId);
 
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
-  const [orderBy, setOrderBy] = useState('call_time');
+  const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -46,18 +49,18 @@ export default function BacktestsView() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = data.kol_backtest_results.map((n) => n.id);
+      const newSelecteds = data.kol_backtest_results.map((n) => n.token_name);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, id) => {
-    const selectedIndex = selected.indexOf(id);
+  const handleClick = (event, name) => {
+    const selectedIndex = selected.indexOf(name);
     let newSelected = [];
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
+      newSelected = newSelected.concat(selected, name);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -65,7 +68,7 @@ export default function BacktestsView() {
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(
         selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
+        selected.slice(selectedIndex + 1),
       );
     }
     setSelected(newSelected);
@@ -114,14 +117,14 @@ export default function BacktestsView() {
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Backtests for KOL ID: {kolId}</Typography>
+        <Typography variant="h4">Token Data</Typography>
         <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
-          New Backtest
+          New Token
         </Button>
       </Stack>
 
       <Card>
-        <BacktestTableToolbar
+        <UserTableToolbar
           numSelected={selected.length}
           filterName={filterName}
           onFilterName={handleFilterByName}
@@ -130,7 +133,7 @@ export default function BacktestsView() {
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
-              <BacktestTableHead
+              <UserTableHead
                 order={order}
                 orderBy={orderBy}
                 rowCount={backtests.length}
@@ -139,34 +142,33 @@ export default function BacktestsView() {
                 onSelectAllClick={handleSelectAllClick}
                 headLabel={[
                   { id: 'token_name', label: 'Token Name' },
-                  { id: 'call_time', label: 'Call Time' },
+                  { id: 'token_address', label: 'Token Address' },
                   { id: 'call_price', label: 'Call Price' },
                   { id: 'current_price', label: 'Current Price' },
                   { id: 'more_change', label: 'More Change' },
                   { id: 'less_change', label: 'Less Change' },
                   { id: 'score', label: 'Score' },
                   { id: 'type', label: 'Type' },
-                  { id: '', label: 'Actions' },
+                  { id: '' },
                 ]}
               />
               <TableBody>
                 {dataFiltered
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
-                    <BacktestTableRow
+                    <UserTableRow
                       key={row.id}
-                      id={row.id}
                       token_name={row.token_name}
+                      token_address={row.token_address}
                       token_logo={row.token_logo}
-                      call_time={row.call_time}
                       call_price={row.call_price}
                       current_price={row.current_price}
                       more_change={row.more_change}
                       less_change={row.less_change}
                       score={row.score}
                       type={row.type}
-                      selected={selected.indexOf(row.id) !== -1}
-                      handleClick={(event) => handleClick(event, row.id)}
+                      selected={selected.indexOf(row.token_name) !== -1}
+                      handleClick={(event) => handleClick(event, row.token_name)}
                     />
                   ))}
 
