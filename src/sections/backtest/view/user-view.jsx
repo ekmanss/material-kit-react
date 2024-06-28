@@ -4,7 +4,6 @@ import { useParams } from 'react-router-dom';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
-import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
@@ -12,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -224,12 +224,21 @@ export default function UserPage() {
                 headLabel={[
                   { id: 'token_name', label: 'Token Name' },
                   { id: 'token_address', label: 'Token Address' },
-                  { id: 'call_price', label: 'Call Price' },
-                  { id: 'current_price', label: 'Current Price' },
-                  { id: 'more_change', label: 'More Change' },
-                  { id: 'less_change', label: 'Less Change' },
+                  { id: 'time_stamp', label: '回测时间' },
+                  { id: 'call_time', label: '喊单时间' },
+                  { id: 'high_time', label: '最高价时间' },
+                  { id: 'low_time', label: '最低价时间' },
+                  { id: 'call_price', label: '喊单价格($)' },
+                  { id: 'high_price', label: '最高价格($)' },
+                  { id: 'low_price', label: '最低价格($)' },
+                  { id: 'more_change', label: '涨幅(0~1)' },
+                  { id: 'less_change', label: '跌幅(0~1)' },
+                  { id: 'harvest_duration', label: '收获时间' },
+                  { id: 'current_price', label: '当前价格($)' },
+                  { id: 'current_marketcap', label: '当前市值($)' },
                   { id: 'score', label: 'Score' },
                   { id: 'type', label: 'Type' },
+                  { id: 'btc_more_change', label: 'BTC涨幅(0~1)' },
                   { id: '', label: 'Actions' },
                 ]}
               />
@@ -239,16 +248,25 @@ export default function UserPage() {
                   .map((row) => (
                     <UserTableRow
                       key={row.id}
-                      id={row.id}
+                      kol_id={row.kol_id}
                       token_name={row.token_name}
                       token_address={row.token_address}
                       token_logo={row.token_logo}
+                      time_stamp={row.time_stamp}
+                      call_time={row.call_time}
+                      high_time={row.high_time}
+                      low_time={row.low_time}
                       call_price={row.call_price}
-                      current_price={row.current_price}
+                      high_price={row.high_price}
+                      low_price={row.low_price}
                       more_change={row.more_change}
                       less_change={row.less_change}
+                      harvest_duration={row.harvest_duration}
+                      current_price={row.current_price}
+                      current_marketcap={row.current_marketcap}
                       score={row.score}
                       type={row.type}
+                      btc_more_change={row.btc_more_change}
                       selected={selected.indexOf(row.token_name) !== -1}
                       handleClick={(event) => handleClick(event, row.token_name)}
                       onEditClick={() => handleEditClick(row)}
