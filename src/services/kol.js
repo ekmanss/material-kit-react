@@ -28,3 +28,8 @@ export const createKol = async (kolData) => {
   const response = await axios.post(`${API_URL}/kol`, kolData);
   return response.data;
 };
+
+export const fetchBacktests = async (kolId) => {
+  const response = await axios.get(`${API_URL}/kol_backtest/${kolId}`);
+  return response.data;
+};

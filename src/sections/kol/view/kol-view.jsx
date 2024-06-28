@@ -251,6 +251,7 @@ export default function KolPage() {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (<UserTableRow
                   key={row.id}
+                  id={row.id}
                   name={row.name}
                   twitter={row.twitter}
                   description={row.description}

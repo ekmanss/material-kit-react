@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import Stack from '@mui/material/Stack';
@@ -23,6 +24,7 @@ const getScoreColor = (score) => {
 };
 
 export default function UserTableRow({
+                                       id,
                                        selected,
                                        twitter,
                                        name,
@@ -37,6 +39,11 @@ export default function UserTableRow({
                                        onDeleteClick,
                                      }) {
   const [open, setOpen] = useState(null);
+  const navigate = useNavigate();
+
+  const handleRowClick = () => {
+    navigate(`/kol/${id}/backtests`);
+  };
 
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
@@ -62,7 +69,7 @@ export default function UserTableRow({
         <Checkbox disableRipple checked={selected} onChange={handleClick} />
       </TableCell>
 
-      <TableCell component="th" scope="row" padding="none">
+      <TableCell component="th" scope="row" padding="none" onClick={handleRowClick} sx={{ cursor: 'pointer' }} >
         <Stack direction="row" alignItems="center" spacing={2}>
           <Avatar alt={name} src={photo} />
           <Typography variant="subtitle2" noWrap>
@@ -113,6 +120,7 @@ export default function UserTableRow({
 }
 
 UserTableRow.propTypes = {
+  id: PropTypes.number.isRequired,
   selected: PropTypes.bool,
   twitter: PropTypes.string,
   name: PropTypes.string,
