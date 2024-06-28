@@ -13,6 +13,11 @@ import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 import CircularProgress from '@mui/material/CircularProgress';
 import Snackbar from '@mui/material/Snackbar';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 import { useBacktests } from 'src/hooks/useBacktests';
 
@@ -35,9 +40,13 @@ export default function UserPage() {
     isError,
     error,
     updateBacktest,
+    deleteBacktest,
     isUpdating,
+    isDeleting,
     updateSuccess,
-    updateError
+    deleteSuccess,
+    updateError,
+    deleteError
   } = useBacktests(kolId);
 
   const [page, setPage] = useState(0);
@@ -49,22 +58,28 @@ export default function UserPage() {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingBacktest, setEditingBacktest] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deletingBacktestId, setDeletingBacktestId] = useState(null);
 
   useEffect(() => {
     if (updateSuccess) {
       setSnackbar({ open: true, message: 'Backtest updated successfully!', severity: 'success' });
     }
-    if (updateError) {
-      let errorMessage = 'Error occurred while updating backtest';
-      if (updateError.response && updateError.response.data) {
-        const { error: api_error, message: api_message } = updateError.response.data;
+    if (deleteSuccess) {
+      setSnackbar({ open: true, message: 'Backtest deleted successfully!', severity: 'success' });
+    }
+    if (updateError || deleteError) {
+      let errorMessage = 'Error occurred';
+      const currentError = updateError || deleteError;
+      if (currentError.response && currentError.response.data) {
+        const { error: api_error, message: api_message } = currentError.response.data;
         errorMessage = `${errorMessage}: ${api_error}. ${api_message}`;
-      } else if (updateError.message) {
-        errorMessage = `${errorMessage}: ${updateError.message}`;
+      } else if (currentError.message) {
+        errorMessage = `${errorMessage}: ${currentError.message}`;
       }
       setSnackbar({ open: true, message: errorMessage, severity: 'error' });
     }
-  }, [updateSuccess, updateError]);
+  }, [updateSuccess, deleteSuccess, updateError, deleteError]);
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -129,6 +144,24 @@ export default function UserPage() {
     updateBacktest(updatedBacktest);
   };
 
+  const handleDeleteClick = (id) => {
+    setDeletingBacktestId(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (deletingBacktestId) {
+      deleteBacktest(deletingBacktestId);
+      setDeleteDialogOpen(false);
+      setDeletingBacktestId(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteDialogOpen(false);
+    setDeletingBacktestId(null);
+  };
+
   const handleCloseSnackbar = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -165,9 +198,9 @@ export default function UserPage() {
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Token Data</Typography>
+        <Typography variant="h4">Back Test Data</Typography>
         <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
-          New Token
+          New Back Test
         </Button>
       </Stack>
 
@@ -197,7 +230,7 @@ export default function UserPage() {
                   { id: 'less_change', label: 'Less Change' },
                   { id: 'score', label: 'Score' },
                   { id: 'type', label: 'Type' },
-                  { id: '' },
+                  { id: '', label: 'Actions' },
                 ]}
               />
               <TableBody>
@@ -206,6 +239,7 @@ export default function UserPage() {
                   .map((row) => (
                     <UserTableRow
                       key={row.id}
+                      id={row.id}
                       token_name={row.token_name}
                       token_address={row.token_address}
                       token_logo={row.token_logo}
@@ -218,6 +252,7 @@ export default function UserPage() {
                       selected={selected.indexOf(row.token_name) !== -1}
                       handleClick={(event) => handleClick(event, row.token_name)}
                       onEditClick={() => handleEditClick(row)}
+                      onDeleteClick={() => handleDeleteClick(row.id)}
                     />
                   ))}
 
@@ -261,7 +296,7 @@ export default function UserPage() {
         </Alert>
       </Snackbar>
 
-      {isUpdating && (
+      {(isUpdating || isDeleting) && (
         <CircularProgress
           size={24}
           sx={{
@@ -273,6 +308,30 @@ export default function UserPage() {
           }}
         />
       )}
+
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={handleCancelDelete}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {'Confirm Deletion'}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this backtest? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmDelete} color="error" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }
