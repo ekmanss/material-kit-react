@@ -1,3 +1,9 @@
+// src/config.js
+
+export const predefinedKeywords = [
+  "AI", "All", "Alpha", "BTC", "Defi", "GameFi", "NFT", "memeCoin", "链上数据分析", "二级市场", "撸毛"
+];
+
 const config = {
   development: {
     API_URL: 'http://localhost:6060',
@@ -12,4 +18,7 @@ const config = {
 
 const env = import.meta.env.VITE_APP_ENV || 'test';
 
-export default config[env];
+export default {
+  ...config[env],
+  predefinedKeywords
+};

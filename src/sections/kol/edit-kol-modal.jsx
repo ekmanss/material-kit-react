@@ -9,11 +9,16 @@ import {
   Chip,
   Box,
   Avatar,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
 } from '@mui/material';
+
+import config, { predefinedKeywords } from 'src/config/config';
 
 export default function EditKolModal({ open, handleClose, kol, onUpdate }) {
   const [editedKol, setEditedKol] = useState(kol || {});
-  const [newKeyword, setNewKeyword] = useState('');
 
   useEffect(() => {
     if (kol) {
@@ -26,13 +31,12 @@ export default function EditKolModal({ open, handleClose, kol, onUpdate }) {
     setEditedKol(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleAddKeyword = () => {
-    if (newKeyword && !editedKol.key_words.includes(newKeyword)) {
+  const handleAddKeyword = (keyword) => {
+    if (keyword && !editedKol.key_words.includes(keyword)) {
       setEditedKol(prev => ({
         ...prev,
-        key_words: [...prev.key_words, newKeyword],
+        key_words: [...prev.key_words, keyword],
       }));
-      setNewKeyword('');
     }
   };
 
@@ -49,7 +53,7 @@ export default function EditKolModal({ open, handleClose, kol, onUpdate }) {
   };
 
   return (
-    <Dialog open={open} onClose={handleClose}>
+    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
       <DialogTitle>编辑 KOL</DialogTitle>
       <DialogContent>
         <TextField
@@ -73,6 +77,8 @@ export default function EditKolModal({ open, handleClose, kol, onUpdate }) {
           margin="normal"
           name="description"
           label="描述"
+          multiline
+          rows={4}
           value={editedKol.description || ''}
           onChange={handleChange}
         />
@@ -81,7 +87,6 @@ export default function EditKolModal({ open, handleClose, kol, onUpdate }) {
           margin="normal"
           name="star"
           label="星级"
-          type="number"
           value={editedKol.star || ''}
           onChange={handleChange}
         />
@@ -90,7 +95,6 @@ export default function EditKolModal({ open, handleClose, kol, onUpdate }) {
           margin="normal"
           name="recommend"
           label="推荐"
-          type="number"
           value={editedKol.recommend || ''}
           onChange={handleChange}
         />
@@ -99,7 +103,6 @@ export default function EditKolModal({ open, handleClose, kol, onUpdate }) {
           margin="normal"
           name="score"
           label="分数"
-          type="number"
           value={editedKol.score || ''}
           onChange={handleChange}
         />
@@ -114,21 +117,40 @@ export default function EditKolModal({ open, handleClose, kol, onUpdate }) {
             onChange={handleChange}
           />
         </Box>
-        <Box mt={2}>
-          <TextField
-            value={newKeyword}
-            onChange={(e) => setNewKeyword(e.target.value)}
+        <FormControl fullWidth margin="normal">
+          <InputLabel id="language-label">语言</InputLabel>
+          <Select
+            labelId="language-label"
+            name="language"
+            value={editedKol.language || ''}
+            onChange={handleChange}
+            label="语言"
+          >
+            <MenuItem value="en">en</MenuItem>
+            <MenuItem value="zh">zh</MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl fullWidth margin="normal">
+          <InputLabel id="keyword-select-label">添加关键词</InputLabel>
+          <Select
+            labelId="keyword-select-label"
+            value=""
+            onChange={(e) => handleAddKeyword(e.target.value)}
             label="添加关键词"
-          />
-          <Button onClick={handleAddKeyword}>添加</Button>
-        </Box>
-        <Box mt={2}>
+          >
+            {predefinedKeywords.map((keyword) => (
+              <MenuItem key={keyword} value={keyword}>{keyword}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <Box mt={2} sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
           {editedKol.key_words?.map((keyword, index) => (
             <Chip
               key={index}
               label={keyword}
               onDelete={() => handleDeleteKeyword(keyword)}
-              style={{ margin: '0 5px 5px 0' }}
+              color="primary"
+              variant="outlined"
             />
           ))}
         </Box>

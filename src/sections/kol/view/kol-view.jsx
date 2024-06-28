@@ -240,11 +240,17 @@ export default function KolPage() {
               numSelected={selected.length}
               onRequestSort={handleSort}
               onSelectAllClick={handleSelectAllClick}
-              headLabel={[{ id: 'name', label: 'Name' }, { id: 'twitter', label: 'Twitter' }, {
-                id: 'description', label: 'Description',
-              }, { id: 'star', label: 'Star' }, { id: 'recommend', label: 'Recommend' }, {
-                id: 'score', label: 'Score',
-              }, { id: 'key_words', label: 'Key Words' }, { id: '', label: 'Actions' }]}
+              headLabel={[
+                { id: 'name', label: 'Name' },
+                { id: 'twitter', label: 'Twitter' },
+                { id: 'description', label: 'Description' },
+                { id: 'star', label: 'Star' },
+                { id: 'recommend', label: 'Recommend' },
+                { id: 'score', label: 'Score' },
+                { id: 'language', label: 'Language' },
+                { id: 'key_words', label: 'Key Words' },
+                { id: '', label: 'Actions' },
+              ]}
             />
             <TableBody>
               {dataFiltered
@@ -259,6 +265,7 @@ export default function KolPage() {
                   recommend={row.recommend}
                   score={row.score}
                   photo={row.photo}
+                  language={row.language}
                   key_words={row.key_words}
                   selected={selected.indexOf(row.name) !== -1}
                   handleClick={(event) => handleClick(event, row.name)}
@@ -312,18 +319,12 @@ export default function KolPage() {
       </Alert>
     </Snackbar>
 
-    {(isUpdating || isDeleting || isCreating) && (
-      <CircularProgress
-        size={24}
-        sx={{
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          marginTop: '-12px',
-          marginLeft: '-12px',
-        }}
-      />
-    )}
+    {(isUpdating || isDeleting || isCreating) && (<CircularProgress
+      size={24}
+      sx={{
+        position: 'fixed', top: '50%', left: '50%', marginTop: '-12px', marginLeft: '-12px',
+      }}
+    />)}
 
     <Dialog
       open={deleteDialogOpen}

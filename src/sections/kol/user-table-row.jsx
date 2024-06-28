@@ -33,6 +33,7 @@ export default function UserTableRow({
                                        recommend,
                                        score,
                                        photo,
+                                       language,
                                        key_words,
                                        handleClick,
                                        onEditClick, // Add this prop
@@ -69,7 +70,7 @@ export default function UserTableRow({
         <Checkbox disableRipple checked={selected} onChange={handleClick} />
       </TableCell>
 
-      <TableCell component="th" scope="row" padding="none" onClick={handleRowClick} sx={{ cursor: 'pointer' }} >
+      <TableCell component="th" scope="row" padding="none" onClick={handleRowClick} sx={{ cursor: 'pointer' }}>
         <Stack direction="row" alignItems="center" spacing={2}>
           <Avatar alt={name} src={photo} />
           <Typography variant="subtitle2" noWrap>
@@ -87,6 +88,7 @@ export default function UserTableRow({
           {score}
         </Label>
       </TableCell>
+      <TableCell>{language}</TableCell>
       <TableCell>{key_words.join(', ')}</TableCell>
 
       <TableCell align="right">
@@ -129,6 +131,7 @@ UserTableRow.propTypes = {
   recommend: PropTypes.string,
   score: PropTypes.string,
   photo: PropTypes.string,
+  language: PropTypes.string,
   key_words: PropTypes.arrayOf(PropTypes.string),
   handleClick: PropTypes.func,
   onEditClick: PropTypes.func, // Add this prop type

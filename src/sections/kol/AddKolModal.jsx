@@ -15,7 +15,7 @@ import {
   FormControl,
 } from '@mui/material';
 
-const predefinedKeywords = ["AI", "All", "Alpha", "BTC", "Defi", "GameFi", "NFT", "memeCoin", "链上数据分析", "二级市场", "撸毛"];
+import config, { predefinedKeywords } from 'src/config/config';
 
 export default function AddKolModal({ open, handleClose, onAdd }) {
   const [newKol, setNewKol] = useState({
@@ -129,8 +129,8 @@ export default function AddKolModal({ open, handleClose, onAdd }) {
             onChange={handleChange}
             label="Language"
           >
-            <MenuItem value="en">English</MenuItem>
-            <MenuItem value="zh">Chinese</MenuItem>
+            <MenuItem value="en">en</MenuItem>
+            <MenuItem value="zh">zh</MenuItem>
           </Select>
         </FormControl>
         <FormControl fullWidth margin="normal">
