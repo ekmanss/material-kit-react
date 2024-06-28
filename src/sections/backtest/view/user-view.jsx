@@ -71,7 +71,7 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = data.kol_backtest_results.map((n) => n.token_name);
+      const newSelecteds = backtests.map((n) => n.token_name);
       setSelected(newSelecteds);
       return;
     }
@@ -186,15 +186,7 @@ export default function UserPage() {
     );
   }
 
-  if (isError) {
-    return (
-      <Container>
-        <Alert severity="error">Error loading data: {error.message}</Alert>
-      </Container>
-    );
-  }
-
-  const backtests = data?.kol_backtest_results || [];
+  const backtests = (isError && error?.response?.status === 404) ? [] : (data?.kol_backtest_results || []);
 
   const dataFiltered = applyFilter({
     inputData: backtests,

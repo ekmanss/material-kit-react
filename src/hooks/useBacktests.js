@@ -7,6 +7,12 @@ export const useBacktests = (kolId) => {
   const query = useQuery({
     queryKey: ['backtests', kolId],
     queryFn: () => kolService.fetchBacktests(kolId),
+    retry: (failureCount, error) => {
+      if (error?.response?.status === 404) {
+        return false;
+      }
+      return failureCount < 3; // 其他错误最多重试 3 次
+    },
   });
 
   const updateMutation = useMutation({
