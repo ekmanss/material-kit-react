@@ -10,6 +10,6 @@ const config = {
   },
 };
 
-const env = import.meta.env.VITE_APP_ENV || 'development';
+const env = import.meta.env.VITE_APP_ENV || 'test';
 
 export default config[env];
