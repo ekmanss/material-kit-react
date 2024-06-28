@@ -239,7 +239,7 @@ export default function UserPage() {
                   { id: 'low_price', label: 'Lowest Price ($)' },
                   { id: 'more_change', label: 'Increase (0~1)' },
                   { id: 'less_change', label: 'Decrease (0~1)' },
-                  { id: 'harvest_duration', label: '收获时间' },
+                  { id: 'harvest_duration', label: 'Harvest Duration' },
                   { id: 'current_price', label: 'Current Price ($)' },
                   { id: 'current_marketcap', label: 'Current Market Cap ($)' },
                   { id: 'score', label: 'Score' },
