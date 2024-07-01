@@ -21,6 +21,7 @@ export default function UserTableRow({
                                        token_address,
                                        token_logo,
                                        time_stamp,
+                                       stage_time,
                                        call_time,
                                        high_time,
                                        low_time,
@@ -53,6 +54,11 @@ export default function UserTableRow({
     return new Date(timestamp * 1000).toLocaleString();
   };
 
+  const formatStageTime = (timestamp) => {
+    if (timestamp === 0) return "-";
+    return formatDate(timestamp);
+  };
+
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
@@ -70,6 +76,7 @@ export default function UserTableRow({
         </TableCell>
         <TableCell>{token_address}</TableCell>
         <TableCell>{formatDate(time_stamp)}</TableCell>
+        <TableCell>{formatStageTime(stage_time)}</TableCell>
         <TableCell>{formatDate(call_time)}</TableCell>
         <TableCell>{formatDate(high_time)}</TableCell>
         <TableCell>{formatDate(low_time)}</TableCell>
@@ -125,6 +132,7 @@ UserTableRow.propTypes = {
   token_address: PropTypes.string,
   token_logo: PropTypes.string,
   time_stamp: PropTypes.number,
+  stage_time: PropTypes.number,
   call_time: PropTypes.number,
   high_time: PropTypes.number,
   low_time: PropTypes.number,

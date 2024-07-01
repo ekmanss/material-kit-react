@@ -231,6 +231,7 @@ export default function UserPage() {
                   { id: 'token_name', label: 'Token Name' },
                   { id: 'token_address', label: 'Token Address' },
                   { id: 'time_stamp', label: 'Backtest Time' },
+                  { id: 'stage_time', label: 'Stage Time' },
                   { id: 'call_time', label: 'Call Time' },
                   { id: 'high_time', label: 'Highest Price Time' },
                   { id: 'low_time', label: 'Lowest Price Time' },
@@ -259,6 +260,7 @@ export default function UserPage() {
                       token_address={row.token_address}
                       token_logo={row.token_logo}
                       time_stamp={row.time_stamp}
+                      stage_time={row.stage_time}
                       call_time={row.call_time}
                       high_time={row.high_time}
                       low_time={row.low_time}

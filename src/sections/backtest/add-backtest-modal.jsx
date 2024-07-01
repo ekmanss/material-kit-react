@@ -9,6 +9,8 @@ import {
   Grid,
   Typography,
   Divider,
+  FormControlLabel,
+  Checkbox,
 } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -25,6 +27,7 @@ export default function AddBacktestModal({ open, handleClose, onAdd, kolId }) {
     call_time: dayjs().unix(),
     high_time: dayjs().unix(),
     low_time: dayjs().unix(),
+    stage_time: 0,
     call_price: '',
     high_price: '',
     low_price: '',
@@ -38,6 +41,8 @@ export default function AddBacktestModal({ open, handleClose, onAdd, kolId }) {
     btc_more_change: '',
   });
 
+  const [isStageTimeEnabled, setIsStageTimeEnabled] = useState(false);
+
   useEffect(() => {
     setNewBacktest(prev => ({ ...prev, kol_id: kolId }));
   }, [kolId]);
@@ -49,6 +54,11 @@ export default function AddBacktestModal({ open, handleClose, onAdd, kolId }) {
 
   const handleDateChange = (name) => (date) => {
     setNewBacktest(prev => ({ ...prev, [name]: date.unix() }));
+  };
+
+  const handleStageTimeToggle = (e) => {
+    setIsStageTimeEnabled(e.target.checked);
+    setNewBacktest(prev => ({ ...prev, stage_time: e.target.checked ? dayjs().unix() : 0 }));
   };
 
   const handleSubmit = () => {
@@ -141,6 +151,35 @@ export default function AddBacktestModal({ open, handleClose, onAdd, kolId }) {
                 onChange={handleDateChange('low_time')}
                 renderInput={(params) => <TextField {...params} fullWidth margin="normal" />}
               />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={isStageTimeEnabled}
+                    onChange={handleStageTimeToggle}
+                    name="stageTimeEnabled"
+                  />
+                }
+                label="Enable Stage Time"
+              />
+              {isStageTimeEnabled ? (
+                <DateTimePicker
+                  label="Stage Time"
+                  value={dayjs.unix(newBacktest.stage_time)}
+                  onChange={handleDateChange('stage_time')}
+                  renderInput={(params) => <TextField {...params} fullWidth margin="normal" />}
+                />
+              ) : (
+                <TextField
+                  fullWidth
+                  margin="normal"
+                  name="stage_time"
+                  label="Stage Time"
+                  value="0"
+                  disabled
+                />
+              )}
             </Grid>
 
             <Grid item xs={12}>
