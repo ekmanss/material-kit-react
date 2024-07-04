@@ -32,6 +32,7 @@ import UserTableToolbar from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 import EditBacktestModal from '../edit-backtest-modal';
 import AddBacktestModal from '../add-backtest-modal';
+import UploadExcelModal from '../upload-excel-modal'; // 新增的导入
 
 export default function UserPage() {
   const { kolId } = useParams();
@@ -43,6 +44,7 @@ export default function UserPage() {
     updateBacktest,
     deleteBacktest,
     createBacktest,
+    uploadBacktestResults, // 新增的导入
     isUpdating,
     isDeleting,
     isCreating,
@@ -57,6 +59,7 @@ export default function UserPage() {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingBacktest, setEditingBacktest] = useState(null);
   const [addModalOpen, setAddModalOpen] = useState(false);
+  const [uploadModalOpen, setUploadModalOpen] = useState(false); // 新增的状态
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletingBacktestId, setDeletingBacktestId] = useState(null);
@@ -178,6 +181,32 @@ export default function UserPage() {
     }
   };
 
+  const handleUploadClick = () => {
+    setUploadModalOpen(true);
+  };
+
+  const handleCloseUploadModal = () => {
+    setUploadModalOpen(false);
+  };
+
+  const handleUploadSuccess = (message) => {
+    setSnackbar({ open: true, message, severity: 'success' });
+    setUploadModalOpen(false);
+  };
+
+  const handleUploadError = (message) => {
+    setSnackbar({ open: true, message, severity: 'error' });
+  };
+
+  const handleUploadExcel = async (formData) => {
+    try {
+      await uploadBacktestResults(formData);
+      handleUploadSuccess('File uploaded successfully.');
+    } catch (error) {
+      handleUploadError(`Error uploading file: ${error.message}`);
+    }
+  };
+
   if (isLoading) {
     return (
       <Container>
@@ -207,6 +236,14 @@ export default function UserPage() {
           onClick={handleAddClick}
         >
           New Back Test
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<Iconify icon="eva:upload-fill" />}
+          onClick={handleUploadClick}
+        >
+          Upload Excel
         </Button>
       </Stack>
 
@@ -316,6 +353,13 @@ export default function UserPage() {
         handleClose={handleCloseAddModal}
         onAdd={handleAddBacktest}
         kolId={kolId}
+      />
+
+      <UploadExcelModal
+        open={uploadModalOpen}
+        handleClose={handleCloseUploadModal}
+        onSuccess={handleUploadSuccess}
+        onError={handleUploadError}
       />
 
       <Snackbar

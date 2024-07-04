@@ -36,6 +36,13 @@ export const useBacktests = (kolId) => {
     },
   });
 
+  const uploadMutation = useMutation({
+    mutationFn: kolService.uploadBacktestResults,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['backtests', kolId]);
+    },
+  });
+
   const updateBacktest = (data) => {
     return new Promise((resolve, reject) => {
       updateMutation.mutate(data, {
@@ -63,13 +70,24 @@ export const useBacktests = (kolId) => {
     });
   };
 
+  const uploadBacktestResults = (formData) => {
+    return new Promise((resolve, reject) => {
+      uploadMutation.mutate(formData, {
+        onSuccess: (result) => resolve(result),
+        onError: (error) => reject(error),
+      });
+    });
+  };
+
   return {
     ...query,
     updateBacktest,
     deleteBacktest,
     createBacktest,
+    uploadBacktestResults,
     isUpdating: updateMutation.isLoading,
     isDeleting: deleteMutation.isLoading,
     isCreating: createMutation.isLoading,
+    isUploading: uploadMutation.isLoading,
   };
 };

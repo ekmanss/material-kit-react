@@ -48,3 +48,12 @@ export const createBacktest = async (backtestData) => {
   const response = await axios.post(`${API_URL}/backtest_result`, backtestData);
   return response.data;
 };
+
+export const uploadBacktestResults = async (formData) => {
+  const response = await axios.post(`${API_URL}/upload_backtest_results`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
