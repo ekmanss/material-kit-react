@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  TextField,
-  CircularProgress,
+  Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, CircularProgress,
 } from '@mui/material';
 import { styled } from '@mui/system';
 import axios from 'axios';
+
+import config from '../../config/config';
+
+const API_URL = config.API_URL;
 
 const Input = styled('input')({
   display: 'none',
@@ -35,7 +33,7 @@ export default function UploadExcelModal({ open, handleClose, onSuccess, onError
     setIsUploading(true);
 
     try {
-      const response = await axios.post('http://localhost:6060/upload_backtest_results', formData, {
+      const response = await axios.post(`${API_URL}/upload_backtest_results`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -49,8 +47,7 @@ export default function UploadExcelModal({ open, handleClose, onSuccess, onError
     }
   };
 
-  return (
-    <Dialog open={open} onClose={handleClose}>
+  return (<Dialog open={open} onClose={handleClose}>
       <DialogTitle>Upload Excel</DialogTitle>
       <DialogContent>
         <label htmlFor="upload-excel-file">
@@ -74,6 +71,5 @@ export default function UploadExcelModal({ open, handleClose, onSuccess, onError
           {isUploading ? <CircularProgress size={24} /> : 'Upload'}
         </Button>
       </DialogActions>
-    </Dialog>
-  );
+    </Dialog>);
 }
