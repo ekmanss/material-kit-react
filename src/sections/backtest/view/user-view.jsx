@@ -33,6 +33,7 @@ import { emptyRows, applyFilter, getComparator } from '../utils';
 import EditBacktestModal from '../edit-backtest-modal';
 import AddBacktestModal from '../add-backtest-modal';
 import UploadExcelModal from '../upload-excel-modal'; // 新增的导入
+import GetPriceModal from '../get-price-modal';
 
 export default function UserPage() {
   const { kolId } = useParams();
@@ -63,6 +64,15 @@ export default function UserPage() {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletingBacktestId, setDeletingBacktestId] = useState(null);
+  const [getPriceModalOpen, setGetPriceModalOpen] = useState(false);
+
+  const handleGetPriceClick = () => {
+    setGetPriceModalOpen(true);
+  };
+
+  const handleCloseGetPriceModal = () => {
+    setGetPriceModalOpen(false);
+  };
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -245,6 +255,14 @@ export default function UserPage() {
         >
           Upload Excel
         </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          startIcon={<Iconify icon="eva:pricetags-fill" />}
+          onClick={handleGetPriceClick}
+        >
+          Get Price
+        </Button>
       </Stack>
 
       <Card>
@@ -360,6 +378,11 @@ export default function UserPage() {
         handleClose={handleCloseUploadModal}
         onSuccess={handleUploadSuccess}
         onError={handleUploadError}
+      />
+
+      <GetPriceModal
+        open={getPriceModalOpen}
+        handleClose={handleCloseGetPriceModal}
       />
 
       <Snackbar
