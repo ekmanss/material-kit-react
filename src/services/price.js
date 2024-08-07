@@ -5,6 +5,6 @@ import config from '../config/config';
 const API_URL = config.API_URL;
 
 export const getPrice = async (params) => {
-  const response = await axios.get(`https://data.wildalpha.xyz/klines/`, { params });
+  const response = await axios.get(`http://34.45.109.111:6868/token-price/`, { params });
   return response.data;
 };
