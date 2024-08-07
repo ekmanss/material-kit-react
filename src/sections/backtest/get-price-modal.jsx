@@ -129,6 +129,7 @@ export default function GetPriceModal({ open, handleClose }) {
     symbol: 'Mog',
     networkId: 'eth',
     fromTimestamp: dayjs(1722441600000),
+    poolAddress: '', // 新增的 poolAddress 参数
   });
   const [result, setResult] = useState(null);
   const { getPrice, isLoading, error } = useGetPrice();
@@ -196,6 +197,16 @@ export default function GetPriceModal({ open, handleClose }) {
                   ))}
                 </Select>
               </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                margin="normal"
+                name="poolAddress"
+                label="Pool Address"
+                value={params.poolAddress}
+                onChange={handleChange}
+              />
             </Grid>
             <Grid item xs={12}>
               <DateTimePicker
