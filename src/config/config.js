@@ -112,7 +112,7 @@ const config = {
     API_URL: 'http://localhost:6868',
   },
   test: {
-    API_URL: 'https://lfgapitest.roguex.io',
+    API_URL: 'https://kolapi.xfinder.fun',
   },
   production: {
     API_URL: 'http://api.example.com',
