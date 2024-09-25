@@ -22,6 +22,11 @@ const navConfig = [
     path: '/kol',
     icon: icon('ic_user'),
   },
+  {
+    title: '每周排行榜',
+    path: '/weekly-ranking',
+    icon: icon('ic_user'),
+  },
   // {
   //   title: 'product',
   //   path: '/products',

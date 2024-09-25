@@ -14,6 +14,7 @@ export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 export const BacktestsPage = lazy(() => import('src/sections/backtests/view/backtests-view'));
 export const DevPage = lazy(() => import('src/sections/backtest/view/user-view'));
+export const WeeklyRankingPage = lazy(() => import('src/sections/weekly-ranking/view/weekly-ranking-view'));
 
 // ----------------------------------------------------------------------
 
@@ -37,6 +38,7 @@ export default function Router() {
         { path: 'kol/:kolId/backtests', element: <DevPage /> }, // 新增这一行
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
+        { path: 'weekly-ranking', element: <WeeklyRankingPage /> },
       ],
     },
     {
