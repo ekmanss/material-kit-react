@@ -12,7 +12,6 @@ export const KolPage = lazy(() => import('src/pages/kol'));
 export const LoginPage = lazy(() => import('src/pages/login'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
-export const BacktestsPage = lazy(() => import('src/sections/backtests/view/backtests-view'));
 export const DevPage = lazy(() => import('src/sections/backtest/view/user-view'));
 export const WeeklyRankingPage = lazy(() => import('src/sections/weekly-ranking/view/weekly-ranking-view'));
 
