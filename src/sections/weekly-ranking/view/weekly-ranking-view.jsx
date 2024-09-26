@@ -21,7 +21,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/system';
 import axios from 'axios';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
@@ -81,11 +81,11 @@ export default function WeeklyRankingView() {
   };
 
   const handleStartDateChange = (newDate) => {
-    setStartDate(newDate);
+    setStartDate(newDate.startOf('day'));
   };
 
   const handleEndDateChange = (newDate) => {
-    setEndDate(newDate);
+    setEndDate(newDate.endOf('day'));
   };
 
   const handleTwitterUrlChange = (event) => {
@@ -162,16 +162,16 @@ export default function WeeklyRankingView() {
               </Box>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <DateTimePicker
-                label="Start Date"
+              <DatePicker
+                label="开始日期"
                 value={startDate}
                 onChange={handleStartDateChange}
                 renderInput={(params) => <TextField {...params} fullWidth />}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <DateTimePicker
-                label="End Date"
+              <DatePicker
+                label="结束日期"
                 value={endDate}
                 onChange={handleEndDateChange}
                 renderInput={(params) => <TextField {...params} fullWidth />}
@@ -219,8 +219,8 @@ export default function WeeklyRankingView() {
                   <TableRow key={ranking.id}>
                     <TableCell>{ranking.year}</TableCell>
                     <TableCell>{ranking.month}</TableCell>
-                    <TableCell>{dayjs.unix(ranking.start_timestamp).format('YYYY-MM-DD HH:mm:ss')}</TableCell>
-                    <TableCell>{dayjs.unix(ranking.end_timestamp).format('YYYY-MM-DD HH:mm:ss')}</TableCell>
+                    <TableCell>{dayjs.unix(ranking.start_timestamp).format('YYYY-MM-DD')}</TableCell>
+                    <TableCell>{dayjs.unix(ranking.end_timestamp).format('YYYY-MM-DD')}</TableCell>
                     <TableCell>
                       <StyledTooltip
                         title={<StyledImage src={ranking.image_url} alt="Weekly Ranking" />}
