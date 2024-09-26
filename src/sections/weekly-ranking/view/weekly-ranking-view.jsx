@@ -25,7 +25,7 @@ import {
   DialogContentText,
   DialogTitle,
 } from '@mui/material';
-import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { Delete as DeleteIcon } from '@mui/icons-material';
 import { styled } from '@mui/system';
 import axios from 'axios';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -34,7 +34,6 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 
 import config from '../../../config/config';
-import EditWeeklyRankingModal from '../EditWeeklyRankingModal';
 
 const API_URL = config.API_URL;
 
@@ -69,10 +68,8 @@ export default function WeeklyRankingView() {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [weeklyRankings, setWeeklyRankings] = useState([]);
   const [twitterUrl, setTwitterUrl] = useState('');
-  const [editingRanking, setEditingRanking] = useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletingRankingId, setDeletingRankingId] = useState(null);
-  const [editModalOpen, setEditModalOpen] = useState(false);
 
   useEffect(() => {
     fetchWeeklyRankings();
@@ -143,26 +140,6 @@ export default function WeeklyRankingView() {
       return;
     }
     setSnackbar({ ...snackbar, open: false });
-  };
-
-  const handleEditClick = (ranking) => {
-    setEditingRanking(ranking);
-    setEditModalOpen(true);
-  };
-
-  const handleCloseEditModal = () => {
-    setEditModalOpen(false);
-    setEditingRanking(null);
-  };
-
-  const handleUpdateRanking = async (updatedRanking) => {
-    try {
-      await axios.put(`${API_URL}/weekly_rankings/${updatedRanking.id}`, updatedRanking);
-      setSnackbar({ open: true, message: '排名更新成功', severity: 'success' });
-      fetchWeeklyRankings();
-    } catch (error) {
-      setSnackbar({ open: true, message: `更新失败: ${error.response?.data?.error || error.message}`, severity: 'error' });
-    }
   };
 
   const handleDeleteClick = (id) => {
@@ -294,9 +271,6 @@ export default function WeeklyRankingView() {
                       </Link>
                     </TableCell>
                     <TableCell>
-                      <IconButton onClick={() => handleEditClick(ranking)}>
-                        <EditIcon />
-                      </IconButton>
                       <IconButton onClick={() => handleDeleteClick(ranking.id)}>
                         <DeleteIcon />
                       </IconButton>
@@ -343,12 +317,6 @@ export default function WeeklyRankingView() {
           </DialogActions>
         </Dialog>
 
-        <EditWeeklyRankingModal
-          open={editModalOpen}
-          handleClose={handleCloseEditModal}
-          ranking={editingRanking}
-          onUpdate={handleUpdateRanking}
-        />
       </Container>
     </LocalizationProvider>
   );
