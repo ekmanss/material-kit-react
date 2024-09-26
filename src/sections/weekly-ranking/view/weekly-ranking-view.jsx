@@ -60,6 +60,7 @@ export default function WeeklyRankingView() {
   const [isUploading, setIsUploading] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [weeklyRankings, setWeeklyRankings] = useState([]);
+  const [twitterUrl, setTwitterUrl] = useState('');
 
   useEffect(() => {
     fetchWeeklyRankings();
@@ -87,9 +88,13 @@ export default function WeeklyRankingView() {
     setEndDate(newDate);
   };
 
+  const handleTwitterUrlChange = (event) => {
+    setTwitterUrl(event.target.value);
+  };
+
   const handleUpload = async () => {
-    if (!file || !startDate || !endDate) {
-      setSnackbar({ open: true, message: '请选择图片并输入开始和结束日期', severity: 'error' });
+    if (!file || !startDate || !endDate || !twitterUrl) {
+      setSnackbar({ open: true, message: '请选择图片,输入开始和结束日期,以及Twitter链接', severity: 'error' });
       return;
     }
 
@@ -102,6 +107,7 @@ export default function WeeklyRankingView() {
     formData.append('weeklyRankingImage', file);
     formData.append('startDate', startDate.unix());
     formData.append('endDate', endDate.unix());
+    formData.append('twitterUrl', twitterUrl);
 
     setIsUploading(true);
 
@@ -171,11 +177,20 @@ export default function WeeklyRankingView() {
                 renderInput={(params) => <TextField {...params} fullWidth />}
               />
             </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Twitter链接"
+                value={twitterUrl}
+                onChange={handleTwitterUrlChange}
+                required
+              />
+            </Grid>
             <Grid item xs={12}>
               <Button
                 variant="contained"
                 onClick={handleUpload}
-                disabled={!file || !startDate || !endDate || isUploading}
+                disabled={!file || !startDate || !endDate || !twitterUrl || isUploading}
               >
                 {isUploading ? <CircularProgress size={24} /> : 'Upload'}
               </Button>
@@ -196,6 +211,7 @@ export default function WeeklyRankingView() {
                   <TableCell>Start Date</TableCell>
                   <TableCell>End Date</TableCell>
                   <TableCell>Image</TableCell>
+                  <TableCell>Twitter链接</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -214,6 +230,11 @@ export default function WeeklyRankingView() {
                           View Image
                         </Link>
                       </StyledTooltip>
+                    </TableCell>
+                    <TableCell>
+                      <Link href={ranking.twitter_url} target="_blank" rel="noopener noreferrer">
+                        Twitter链接
+                      </Link>
                     </TableCell>
                   </TableRow>
                 ))}
