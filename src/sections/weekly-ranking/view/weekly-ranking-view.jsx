@@ -18,7 +18,14 @@ import {
   Link,
   TextField,
   Tooltip,
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from '@mui/material';
+import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { styled } from '@mui/system';
 import axios from 'axios';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -27,6 +34,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 
 import config from '../../../config/config';
+import EditWeeklyRankingModal from '../EditWeeklyRankingModal';
 
 const API_URL = config.API_URL;
 
@@ -61,6 +69,10 @@ export default function WeeklyRankingView() {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [weeklyRankings, setWeeklyRankings] = useState([]);
   const [twitterUrl, setTwitterUrl] = useState('');
+  const [editingRanking, setEditingRanking] = useState(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deletingRankingId, setDeletingRankingId] = useState(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   useEffect(() => {
     fetchWeeklyRankings();
@@ -105,8 +117,8 @@ export default function WeeklyRankingView() {
 
     const formData = new FormData();
     formData.append('weeklyRankingImage', file);
-    formData.append('startDate', startDate.unix());
-    formData.append('endDate', endDate.unix());
+    formData.append('startDate', startDate.startOf('day').unix());
+    formData.append('endDate', endDate.endOf('day').unix());
     formData.append('twitterUrl', twitterUrl);
 
     setIsUploading(true);
@@ -131,6 +143,50 @@ export default function WeeklyRankingView() {
       return;
     }
     setSnackbar({ ...snackbar, open: false });
+  };
+
+  const handleEditClick = (ranking) => {
+    setEditingRanking(ranking);
+    setEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setEditModalOpen(false);
+    setEditingRanking(null);
+  };
+
+  const handleUpdateRanking = async (updatedRanking) => {
+    try {
+      await axios.put(`${API_URL}/weekly_rankings/${updatedRanking.id}`, updatedRanking);
+      setSnackbar({ open: true, message: '排名更新成功', severity: 'success' });
+      fetchWeeklyRankings();
+    } catch (error) {
+      setSnackbar({ open: true, message: `更新失败: ${error.response?.data?.error || error.message}`, severity: 'error' });
+    }
+  };
+
+  const handleDeleteClick = (id) => {
+    setDeletingRankingId(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (deletingRankingId) {
+      try {
+        await axios.delete(`${API_URL}/weekly_rankings/${deletingRankingId}`);
+        setSnackbar({ open: true, message: '排名删除成功', severity: 'success' });
+        fetchWeeklyRankings();
+      } catch (error) {
+        setSnackbar({ open: true, message: `删除失败: ${error.response?.data?.error || error.message}`, severity: 'error' });
+      }
+      setDeleteDialogOpen(false);
+      setDeletingRankingId(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteDialogOpen(false);
+    setDeletingRankingId(null);
   };
 
   return (
@@ -212,6 +268,7 @@ export default function WeeklyRankingView() {
                   <TableCell>End Date</TableCell>
                   <TableCell>Image</TableCell>
                   <TableCell>Twitter链接</TableCell>
+                  <TableCell>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -236,6 +293,14 @@ export default function WeeklyRankingView() {
                         Twitter链接
                       </Link>
                     </TableCell>
+                    <TableCell>
+                      <IconButton onClick={() => handleEditClick(ranking)}>
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton onClick={() => handleDeleteClick(ranking.id)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -253,6 +318,37 @@ export default function WeeklyRankingView() {
             {snackbar.message}
           </Alert>
         </Snackbar>
+
+        <Dialog
+          open={deleteDialogOpen}
+          onClose={handleCancelDelete}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {'确认删除'}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              您确定要删除这个周排名吗？此操作无法撤销。
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCancelDelete} color="primary">
+              取消
+            </Button>
+            <Button onClick={handleConfirmDelete} color="error" autoFocus>
+              删除
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <EditWeeklyRankingModal
+          open={editModalOpen}
+          handleClose={handleCloseEditModal}
+          ranking={editingRanking}
+          onUpdate={handleUpdateRanking}
+        />
       </Container>
     </LocalizationProvider>
   );
